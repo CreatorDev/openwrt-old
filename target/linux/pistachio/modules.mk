@@ -178,9 +178,8 @@ $(eval $(call KernelPackage,nhc_udp))
 define KernelPackage/uccp420wlan
   SUBMENU:=$(WIRELESS_MENU)
   TITLE:=Imagination wireless driver
-  KCONFIG:=CONFIG_UCCP420WLAN
   KCONFIG:=\
-    CONFIG_UCCP420WLAN=y \
+    CONFIG_UCCP420WLAN \
     CONFIG_CFG80211=y \
     CONFIG_CFG80211_DEVELOPER_WARNINGS=n \
     CONFIG_CFG80211_REG_DEBUG=n \
@@ -210,10 +209,9 @@ define KernelPackage/uccp420wlan
     CONFIG_MAC80211_HWSIM=m \
     CONFIG_ATH_CARDS=n \
     CONFIG_MWIFIEX=n \
-    CONFIG_RSI_91X=n \
+    CONFIG_RSI_91X=n
   FILES:=$(LINUX_DIR)/drivers/net/wireless/uccp420wlan/uccp420wlan.ko
-  DEPENDS:=+kmod-cfg80211
-  AUTOLOAD:=$(call AutoLoad,30,$(FILES))
+  AUTOLOAD:=$(call AutoLoad,32,uccp420wlan)
 endef
 
 define KernelPackage/uccp420wlan/description
