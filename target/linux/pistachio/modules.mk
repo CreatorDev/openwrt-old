@@ -212,6 +212,7 @@ define KernelPackage/uccp420wlan
     CONFIG_MWIFIEX=n \
     CONFIG_RSI_91X=n \
   FILES:=$(LINUX_DIR)/drivers/net/wireless/uccp420wlan/uccp420wlan.ko
+  DEPENDS:=+kmod-cfg80211
   AUTOLOAD:=$(call AutoLoad,30,$(FILES))
 endef
 

@@ -28,7 +28,7 @@ define Profile/marduk
     PACKAGES:=kmod-i2c kmod-usb-dwc2 kmod-marduk-cc2520 kmod-sound-pistachio-soc \
 		wpan-tools tcpdump uhttpd uboot-envtools \
 		alsa-lib alsa-utils alsa-utils-tests \
-		kmod-cfg80211 wpa-supplicant kmod-uccp420wlan
+		wpa-supplicant kmod-uccp420wlan
 endef
 
 define Profile/marduk/Description
