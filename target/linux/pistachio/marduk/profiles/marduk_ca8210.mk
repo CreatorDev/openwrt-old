@@ -26,7 +26,7 @@
 define Profile/marduk_ca8210
     NAME:=Cascoda ca8210 platform profile for Marduk
     PACKAGES:=kmod-i2c kmod-usb-dwc2 kmod-cascoda \
-              wpan-tools tcpdump uboot-envtools
+              wpan-tools tcpdump uboot-envtools i2c-tools
 endef
 
 define Profile/marduk_ca8210/Description
