@@ -338,6 +338,18 @@ You can check "ifconfig -a" to check list of interfaces. Ethernet, WiFi and 6loW
 
         $root@OpenWrt:/# /etc/init.d/network restart
 
+##Writing UBIFS image to Flash
+
+For setting up a tftp server on your development machine, please refer **TFTP Boot** section above.
+
+Instructions are as follows :-
+
+    sf probe 1:0 && dhcp
+    mtdpart default && nand erase.part firmware0
+    setenv serverip 192.168.91.79 && tftpboot 0xe000000 openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
+    nand write 0xe000000 firmware0 ${filesize};
+    setenv nandroot "ubi.mtd=firmware0 root=ubi0:rootfs rootfstype=ubifs" && setenv bootcmd 'run nandboot' && saveenv
+
 ### Known Issues:
 
 - Cleaned up kernel patches will be upstreamed soon.
