@@ -67,7 +67,7 @@ Load Marduk platform specific openwrt configuration for Pistachio.
         Target Profile (Basic platform profile for Marduk)  ---> (X) Basic platform profile for Marduk with TI cc2520
                                                                  ( ) Basic platform profile for Marduk with Cascoda ca8210
 
-You can also load Marduk platform specific openwrt configuration for Pistachio by adding following into .config.
+You can also load Marduk platform specific openwrt configuration for Pistachio by adding following into .config file.
 
     $ echo "CONFIG_TARGET_pistachio=y" > .config
     $ echo "CONFIG_TARGET_pistachio_marduk_marduk_cc2520=y" >> .config
@@ -80,7 +80,7 @@ Now build OpenWrt in standard way:
 Once the build is completed, you will find the resulting output i.e. images, dtbs and rootfs at "bin/pistachio", depending upon the selected profile.
 - openwrt-pistachio-pistachio_marduk_cc2520-uImage
 - openwrt-pistachio-pistachio_marduk_cc2520-uImage-initramfs
-- openwrt-pistachio-marduk-marduk_cc2520-rootfs.tar.gz
+- openwrt-pistachio-marduk-marduk-cc2520-rootfs.tar.gz
 - pistachio_marduk_cc2520.dtb
 
 ## Customising your OpenWrt
@@ -97,8 +97,8 @@ If you want to add new package, then simply add package name in the list of pack
     NAME:=Basic platform profile for Marduk?
     PACKAGES:=kmod-i2c kmod-marduk-cc2520 kmod-sound-pistachio-soc \
                 wpan-tools tcpdump uhttpd uboot-envtools \
-                alsa-lib alsa-utils alsa-utils-tests
-
+                alsa-lib alsa-utils alsa-utils-tests \
+                iw hostapd wpa-supplicant kmod-uccp420wlan kmod-cfg80211
     endef
 
 
@@ -136,10 +136,9 @@ Then connect to it (remember to choose the correct device listed in above comman
 
     $ sudo miniterm.py /dev/ttyUSB0 -b 115200
 
-## Instructions for putting root filesystem on usb and booting from usb drive
-Firstly you need to format USB drive into ext4 parition. Partition your media with one big ext4 partion (use dos partition table)
+## Boot from USB
+As a first step, you need to format USB drive into ext4 parition. Partition your media with one big ext4 partion (use dos partition table)
 You can check the partition number by following way:
-
 
 `$ mount | grep /media
 /dev/sdx1 on /media/user/43e3311e-7b95-4693-bfcd-b07fa4590a0d type ext4 (rw,nosuid,nodev,uhelper=udisks2)`
@@ -161,37 +160,30 @@ Create new partition table:
     > enter 'w' to write the new partition table and exit
     $ sudo mkfs.ext4 /dev/sdx1
 
-Mount the usb drive:
+Mount the USB drive:
 
     $ sudo mount /dev/sdx1 /mnt/
 
 To put filesystem on USB you will need 'openwrt-pistachio-marduk-marduk_cc2520-rootfs.tar.gz' which is available at "openwrt/bin/pistachio"
 
-Extract the openwrt-pistachio-marduk-marduk_cc2520-rootfs.tar.gz onto the partition you just created
+Extract the openwrt-pistachio-marduk-marduk_cc2520-rootfs.tar.gz onto the partition you just created:
 
     $ sudo rm -rf /mnt/*
     $ sudo tar -xf bin/pistachio/openwrt-pistachio-marduk-marduk_cc2520-rootfs.tar.gz -C /mnt/
     $ sudo umount /mnt/
 
-
-Run "sync" command to synchronize the data properly on the USB drive.
+Run "sync" command to synchronize the data properly on the USB drive:
 
     $ sync
 
-
 Connect the USB drive and power on the board.
 
-Press Enter on the serial console to cancel the autoboot and to get the uboot prompt. Check if the all the environment variables are setup properly on the uboot prompt or not
-
-    $ pistachio # printenv
-
-Type following command to boot from usb.
+Press Enter on the serial console to cancel the autoboot and to get the uboot prompt. Type following command to boot from USB:
 
     $ pistachio # run usbboot
 
 ## Boot from SD Card
-Similar to the instructions for Boot from usb drive, you need to format the SD card into ext4 parition. Follow the steps mentioned above by making subtle changes
-
+Similar to the instructions for Boot from USB, you need to format the SD card into ext4 parition. Follow the steps mentioned above by making subtle changes
 
 `$ mount | grep /media
 /dev/sdc1 on /media/user/5c0dac14-1d47-4a39-8b06-e27861473670 type ext4 (rw,nosuid,nodev,uhelper=udisks2)'
@@ -216,28 +208,24 @@ Mount the SD media:
 
 To put filesystem on SD you will need 'openwrt-pistachio-marduk-marduk_cc2520-rootfs.tar.gz' which is available at "openwrt/bin/pistachio"
 
-Extract the openwrt-pistachio-marduk-marduk_cc2520-rootfs.tar.gz onto the partition you just created
+Extract the openwrt-pistachio-marduk-marduk_cc2520-rootfs.tar.gz onto the partition you just created:
 
     $ sudo rm -rf /mnt/*
     $ sudo tar -xf bin/pistachio/openwrt-pistachio-marduk-marduk_cc2520-rootfs.tar.gz -C /mnt/
     $ sudo umount /mnt/
 
-Run "sync" command to synchronize the data properly on the SD card.
+Run "sync" command to synchronize the data properly on the SD card:
 
     $ sync
 
 Connect the SD card in the slot and power on the board.
 
-Press Enter on the serial console to cancel the autoboot and to get the uboot prompt. Check if the all the environment variables are setup properly on the uboot prompt or not
-
-    $ pistachio # printenv
-
-Type following command to boot from SD.
+Press Enter on the serial console to cancel the autoboot and to get the uboot prompt. Type following command to boot from SD card:
 
     $ pistachio # run mmcboot
 
 ## TFTP Boot
-For TFTP boot, we need TFTP server serving kernel image (uImage), dtb (*.dtb)
+For TFTP boot, you will need TFTP server serving kernel image (uImage), dtb (*.dtb)
 and initramfs filesystem.
 
     $ sudo cp bin/pistachio/openwrt-pistachio-pistachio_marduk_cc2520-uImage-initramfs /tftpboot/uImage
@@ -267,9 +255,9 @@ Now restart service:
 
     $ sudo service xinetd restart
 
-####Configure Uboot
+####Configuring Uboot
 
-Now use Serial Console to connect device to host PC. Switch on device and press any key in first 2 seconds. After that you will drop to a u-boot console.
+Now use Serial Console to connect device to host PC. Switch on device and press any key in first 2 seconds. After that you will drop to u-boot console.
 
 To use tftp boot, set following environment variables.
 
@@ -364,7 +352,6 @@ You can check "ifconfig -a" to check list of interfaces. Ethernet, WiFi and 6loW
 
 2. You can enable WiFi by default by following below steps :-
     - set ssid and password for WiFi either at compile time from file target/linux/pistachio/base-files/etc/uci-defaults/config/wireless
-
 
             config wifi-iface
                 option device       radio0
