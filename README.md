@@ -229,7 +229,7 @@ Press Enter on the [Serial Console](#serial-console) to cancel the autoboot and 
 To make boot from SD card as default boot method, run the following commands on u-boot prompt (_ignore any warnings shown_):
 
     pistachio # setenv bootcmd 'run mmcboot'
-    pistachio # saveenv`
+    pistachio # saveenv
 
 ## TFTP Boot
 For TFTP boot, you will need TFTP server serving kernel image (uImage), dtb (*.dtb)
@@ -371,7 +371,7 @@ You can check "ifconfig -a" to check list of interfaces. Ethernet, WiFi and 6loW
             option encryption   psk2
             option key          <Password>
 
-   OR after booting update /etc/config/wireless as above and restart the network by running following command from serial console.
+   OR after booting the board, update /etc/config/wireless as above and restart the network by running following command from serial console.
 
         $root@OpenWrt:/# /etc/init.d/network restart
  
