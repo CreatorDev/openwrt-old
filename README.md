@@ -108,7 +108,7 @@ Please ensure to remove .config, tmp folders before running make menuconfig.
 
 Verify that package name is selected. Just save and exit.
 
-## Customising your linux kernel
+## Customising your Linux Kernel
 
 Kernel configuration is saved at target/linux/pistachio/config-4.1
 e.g. This the one for the IMG pistachio board as it has some useful defaults.
@@ -119,9 +119,9 @@ To customise to suit your requirements use the following command:
 
 If you change any option you need and then save & quit GUI, the changed configuration will get written into target/linux/pistachio/config-4.1
 
-For more details please refer [OpenWrt Build System]("http://wiki.openwrt.org/doc/howto/build")
+For more details please refer to [OpenWrt Build System]("http://wiki.openwrt.org/doc/howto/build")
 
-## Serial console
+## Serial Console
 Connect the Marduk board to development computer over serial port. Open a serial console on host PC.
 
 - In Windows PuTTY, HyperTerminal, or any other free application can be used.
@@ -178,9 +178,14 @@ Run "sync" command to synchronize the data properly on the USB drive:
 
 Connect the USB drive and power on the board.
 
-Press Enter on the serial console to cancel the autoboot and to get the uboot prompt. Type following command to boot from USB:
+Press Enter on the [Serial Console](#serial-console) to cancel the autoboot and to get the uboot prompt. Type following command to boot from USB:
 
     $ pistachio # run usbboot
+
+To make boot from USB as default boot method, run the following commands (ignore any warnings shown):
+	
+    $ pistachio # setenv bootcmd run usbboot
+    $ psitachio # saveenv
 
 ## Boot from SD Card
 Similar to the instructions for Boot from USB, you need to format the SD card into ext4 parition. Follow the steps mentioned above by making subtle changes
@@ -220,9 +225,14 @@ Run "sync" command to synchronize the data properly on the SD card:
 
 Connect the SD card in the slot and power on the board.
 
-Press Enter on the serial console to cancel the autoboot and to get the uboot prompt. Type following command to boot from SD card:
+Press Enter on the [Serial Console](#serial-console) to cancel the autoboot and to get the uboot prompt. Type following command to boot from SD card:
 
     $ pistachio # run mmcboot
+
+To make boot from SD card as default boot method, run the following commands on uboot prompt (ignore any warnings shown):
+	
+    $ pistachio # setenv bootcmd run mmcboot
+    $ psitachio # saveenv
 
 ## TFTP Boot
 For TFTP boot, you will need TFTP server serving kernel image (uImage), dtb (*.dtb)
@@ -280,11 +290,9 @@ Now start tftp boot:
 
 ####Boot from Flash
 
-Boot from Flash requires tftp server.
+This is the default boot method set on Marduk platform. It requires TFTP server installed on your development PC. To set up TFTP server, refer to [Setting up TFTP Server](#setting-up-tftp-server) section.
 
-For setting up a tftp server on your development machine, refer **TFTP Boot** section above.
-
-Once tftp server is set up, follow the instructions given below :
+Once tftp server is set up, follow the instructions given below:
 
 1. Init flash device on given SPI bus and chip select
 
@@ -310,7 +318,7 @@ Once tftp server is set up, follow the instructions given below :
 
         nand write 0xe000000 firmware0 ${filesize};
 
-7. Save ubifs boot environment variables
+7. Save nand boot environment variables
 
         setenv nandroot "ubi.mtd=firmware0 root=ubi0:rootfs rootfstype=ubifs"
         setenv bootcmd 'run nandboot'
@@ -346,11 +354,11 @@ You can check "ifconfig -a" to check list of interfaces. Ethernet, WiFi and 6loW
 
 **Note:**
 
-1. 6loWPAN IP has been hardcoded to 2001:1418:0100::1/48. You can change that by editing /etc/config/network script and restarting it.
+1. 6loWPAN IP has been hardcoded to 2001:1418:0100::1/48. You can change that by editing /etc/config/network script and restarting the network daemon.
 
         $root@OpenWrt:/# /etc/init.d/network restart
 
-2. You can enable WiFi by default by following below steps :-
+2. You can enable WiFi by default by following below steps:
     - set ssid and password for WiFi either at compile time from file target/linux/pistachio/base-files/etc/uci-defaults/config/wireless
 
             config wifi-iface
@@ -373,4 +381,3 @@ You can check "ifconfig -a" to check list of interfaces. Ethernet, WiFi and 6loW
 
 - Cleaned up kernel patches will be upstreamed soon.
 - OPKG support is not implemented.
-
