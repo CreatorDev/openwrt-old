@@ -26,9 +26,10 @@
 define Profile/marduk_ca8210
     NAME:=Basic platform profile for Marduk with Cascoda ca8210
     PACKAGES:=kmod-i2c kmod-cascoda kmod-sound-pistachio-soc \
-              wpan-tools tcpdump uhttpd uboot-envtools \
-              alsa-lib alsa-utils alsa-utils-tests \
-              iw hostapd wpa-supplicant kmod-uccp420wlan kmod-cfg80211
+        wpan-tools tcpdump uhttpd uboot-envtools \
+        alsa-lib alsa-utils alsa-utils-tests \
+        iw hostapd wpa-supplicant wpa-cli iperf \
+        kmod-uccp420wlan kmod-cfg80211 fping
 endef
 
 define Profile/marduk_ca8210/Description
