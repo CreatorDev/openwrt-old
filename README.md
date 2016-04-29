@@ -297,7 +297,7 @@ To set up TFTP server on your development PC, refer to [Setting up TFTP Server](
 
         pistachio # sf probe 1:0
 
-2. Obtain an IP address:
+2. Obtain an IP address (only needed if you are using TFTP server to load the image):
 
         pistachio # dhcp
 
@@ -317,7 +317,7 @@ To set up TFTP server on your development PC, refer to [Setting up TFTP Server](
 OR
     Copy the openwrt-pistachio-marduk-marduk_cc2520-ubifs.img to (ext4 formatted) USB drive and load from USB drive:
 
-        pistachio # usb start;ext4load usb 0 0x0E000000 openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
+        pistachio # usb start && ext4load usb 0 0x0E000000 openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
 
 6. Initialize write to nand device:
 
