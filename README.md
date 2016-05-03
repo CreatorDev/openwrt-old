@@ -368,27 +368,26 @@ _X needs to be replaced with 0 or 1 depending upon firmware0 or firmware1 respec
 
 You can use ubiformat utility to flash the ubifs image when system is booted up and running. *However extra care needs to be taken to select the appropriate mtd partition, as selecting a wrong partition may erase your bootloader completely.*
 
-1. Check the boot partion from which system is booted from:
+1. Check the boot partition from which system is booted from.
 
 
     root@OpenWrt:/# fw_printenv boot_partition
-    boot_partition=0
-If boot_partition is 0, then booted from firmware0 and if 1, then booted from firmware1.
+_If boot_partition is 0, then booted from firmware0 and if 1, then booted from firmware1._
 
 2. Flash the ubifs image on other partition.
 
-Select /dev/mtd1 for flashing on firmwareX
 
     root@OpenWrt:/# ubiformat /dev/mtdX -y
 _Replace X with 0 or 1 depending upon firmware0 or firmware1 respectively._
 
-3. Select the NAND partition to boot from:
+3. Select the NAND partition to boot from.
 
 
     root@OpenWrt:/# fw_setenv boot_partition X
 _X needs to be replaced with 0 or 1 depending upon firmware0 or firmware1 respectively._
 
-4.Save the uboot environment and reboot.
+4. Save the uboot environment and reboot.
+
 
     root@OpenWrt:/# fw_setenv nandroot ubi.mtd=firmware${boot_partition} root=ubi0:rootfs rootfstype=ubifs
     root@OpenWrt:/# fw_setenv bootcmd 'run dualnandboot'
