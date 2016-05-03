@@ -349,8 +349,6 @@ _X needs to be replaced with 0 or 1 depending upon firmware0 or firmware1 respec
 
 8. Save dual nand boot environment variables and reboot.
 
-        pistachio # setenv nandroot ubi.mtd=firmware${boot_partition} root=ubi0:rootfs rootfstype=ubifs
-        pistachio # setenv bootcmd 'run dualnandboot'
         pistachio # saveenv
 
 ##### Flashing on OpenWrt prompt
@@ -367,17 +365,10 @@ _If boot_partition is 0, then booted from firmware0 and if 1, then booted from f
         root@OpenWrt:/# ubiformat /dev/mtdX -y -f openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
 _Replace X with 0 or 1 depending upon firmware0 or firmware1 respectively._
 
-3. Select the NAND partition to boot from.
+3. Select the NAND partition to boot from and reboot.
 
         root@OpenWrt:/# fw_setenv boot_partition X
 _X needs to be replaced with 0 or 1 depending upon firmware0 or firmware1 respectively._
-
-4. Save the uboot environment and reboot.
-
-        root@OpenWrt:/# fw_setenv nandroot ubi.mtd=firmware${boot_partition} root=ubi0:rootfs rootfstype=ubifs
-        root@OpenWrt:/# fw_setenv bootcmd 'run dualnandboot'
-        root@OpenWrt:/# fw_saveenv
-
 
 ##System upgrade
 
