@@ -378,7 +378,7 @@ _If boot_partition is 0, then booted from firmware0 and if 1, then booted from f
 2. Flash the ubifs image on other partition.
 
 
-        root@OpenWrt:/# ubiformat /dev/mtdX -y
+        root@OpenWrt:/# ubiformat /dev/mtdX -y -f openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
 
 _Replace X with 0 or 1 depending upon firmware0 or firmware1 respectively._
 
