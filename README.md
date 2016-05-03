@@ -236,7 +236,7 @@ For TFTP boot, you will need TFTP server serving kernel image (uImage), dtb (*.d
 and initramfs filesystem.
 
     $ sudo cp bin/pistachio/openwrt-pistachio-pistachio_marduk_cc2520-uImage-initramfs /tftpboot/uImage
-    $ sudo cp bin/pistachio/pistachio_marduk_cc2520.dtb /tftpboot
+    $ sudo cp bin/pistachio/pistachio_marduk_cc2520.dtb /tftpboot/pistachio_marduk.dtb
 
 ### Setting up TFTP Server
 
@@ -274,21 +274,17 @@ To use tftp boot, set the following environment variables
 
 1. Set mac address for Ethernet:
 
-
         pistachio # setenv ethaddr <00:19:F5:xx:xx:xx>
 
 2. Set Server IP address where TFTP server is running:
-
 
         pistachio # setenv serverip <server_ip>
 
 3. Save environment variables:
 
-
         pistachio # saveenv
 
 4. Now start tftp boot:
-
 
         pistachio # run ethboot
 
@@ -316,21 +312,17 @@ To set up TFTP server on your development PC, refer to [Setting up TFTP Server](
 
 1. Init flash device on given SPI bus and chip select:
 
-
         pistachio # sf probe 1:0
 
 2. Obtain an IP address (only needed if you are using TFTP server to load the image):
-
 
         pistachio # dhcp
 
 3. Define flash/nand partitions:
 
-
         pistachio # mtdpart default
 
 4. Erase partition:
-
 
         pistachio # nand erase.part firmwareX
 _firmwareX needs to be replaced with firmware0 or firmware1._
@@ -347,18 +339,15 @@ OR
 
 6. Initialize write to nand device:
 
-
         pistachio # nand write 0xe000000 firmwareX ${filesize};
 _firmwareX needs to be replaced with firmware0 or firmware1._
 
-7. Select the NAND parition to boot from:
-
+7. Select the NAND parition to boot from.
 
         pistachio # setenv boot_partition X
 _X needs to be replaced with 0 or 1 depending upon firmware0 or firmware1 respectively._
 
-8. Save dual nand boot environment variables
-
+8. Save dual nand boot environment variables and reboot.
 
         pistachio # setenv nandroot ubi.mtd=firmware${boot_partition} root=ubi0:rootfs rootfstype=ubifs
         pistachio # setenv bootcmd 'run dualnandboot'
@@ -370,27 +359,20 @@ You can use ubiformat utility to flash the ubifs image when system is booted up 
 
 1. Check the boot partition from which system is booted from.
 
-
         root@OpenWrt:/# fw_printenv boot_partition
-
 _If boot_partition is 0, then booted from firmware0 and if 1, then booted from firmware1._
 
 2. Flash the ubifs image on other partition.
 
-
         root@OpenWrt:/# ubiformat /dev/mtdX -y -f openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
-
 _Replace X with 0 or 1 depending upon firmware0 or firmware1 respectively._
 
 3. Select the NAND partition to boot from.
 
-
         root@OpenWrt:/# fw_setenv boot_partition X
-
 _X needs to be replaced with 0 or 1 depending upon firmware0 or firmware1 respectively._
 
 4. Save the uboot environment and reboot.
-
 
         root@OpenWrt:/# fw_setenv nandroot ubi.mtd=firmware${boot_partition} root=ubi0:rootfs rootfstype=ubifs
         root@OpenWrt:/# fw_setenv bootcmd 'run dualnandboot'
@@ -399,20 +381,16 @@ _X needs to be replaced with 0 or 1 depending upon firmware0 or firmware1 respec
 
 ##System upgrade
 
-Sysupgrade can now be used to flash ubifs images from within OpenWrt:
-
-    root@OpenWrt:/# sysupgrade -v /tmp/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
-
 You can download the ubifs image from webserver using wget or copy from USB drive.But the image must be put into /tmp as OpenWRT switches to a ramfs to do upgrade.
 
 ###Downloading ubifs image from webserver
 
     root@OpenWrt:/# cd /tmp
-    root@OpenWrt:/# wget http://192.168.91.79:8080/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
-(Replace `192.168.91.79:/8080` with IP address:/Portno of your webserver)
+    root@OpenWrt:/# wget http://webserver/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
+
 ###Copying ubifs image from USB drive
 
-    root@OpenWrt:/# mount /dev/sda1 /mnt/cd /tmp
+    root@OpenWrt:/# mount /dev/sda1 /mnt/
     root@OpenWrt:/# cp /mnt/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img /tmp
 
 The image will be flashed onto the mtd partition that is not in use (firmware0 or firmware1) then uboot is updated to boot from that partition. 
@@ -423,18 +401,18 @@ U-boot environment variables should be set to default as follows:
     pistachio # env default -a
     pistachio # saveenv
 
-You can also set or print the u-boot environment variables from OpenWrt too:
-
-    root@OpenWrt:/# fw_printenv
-    root@OpenWrt:/# fw_setenv bootcmd 'run dualnandboot'
-
 ###Fallback mechanism
 If image fails to boot in 5 successive attempts, then bootloader will try to boot image from alternate partition.
 Uboot variable bootcount is reset after successful boot.
 
+###Upgrading the flash image
+Sysupgrade can now be used to flash ubifs images from within OpenWrt:
+
+    root@OpenWrt:/# sysupgrade -v /tmp/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
+
 You should see the logs on the console as below:
 
-    root@OpenWrt:/tmp# sysupgrade openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
+    root@OpenWrt:/# sysupgrade /tmp/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
     Saving config files...
     Sending TERM to remaining processes ... logd rpcd netifd odhcpd uhttpd dnsmasq awa_bootstrapd awa_clientd awa_serverd ntpd button_gateway_ button_gateway_ device_manager_ sleep ubusd
     Sending KILL to remaining processes ... device_manager_
@@ -475,13 +453,11 @@ You can check "ifconfig -a" to check list of interfaces. Ethernet, WiFi and 6loW
 
 1. 6loWPAN IP has been hardcoded to 2001:1418:0100::1/48. You can change that by editing /etc/config/network script and restarting the network daemon.
 
-
         $root@OpenWrt:/# /etc/init.d/network restart
 
 2. You can enable WiFi by default by following below steps:
 
 - set ssid and password for WiFi either at compile time from file target/linux/pistachio/base-files/etc/uci-defaults/config/wireless
-
 
         config wifi-iface
             option device       radio0
@@ -496,7 +472,6 @@ You can check "ifconfig -a" to check list of interfaces. Ethernet, WiFi and 6loW
         $root@OpenWrt:/# /etc/init.d/network restart
  
 - set default route for WiFi in target/linux/pistachio/base-files/etc/uci-defaults/config/network as
-
 
         option 'defaultroute' '1'
 
