@@ -274,40 +274,66 @@ To use tftp boot, set the following environment variables
 
 1. Set mac address for Ethernet:
 
+
         pistachio # setenv ethaddr <00:19:F5:xx:xx:xx>
 
 2. Set Server IP address where TFTP server is running:
+
 
         pistachio # setenv serverip <server_ip>
 
 3. Save environment variables:
 
+
         pistachio # saveenv
 
 4. Now start tftp boot:
+
 
         pistachio # run ethboot
 
 ##Boot from Flash
 
-This is the default boot method set on Marduk platform. Either you can copy the openwrt-pistachio-marduk-marduk_cc2520-ubifs.img on the USB drive or you can place the same on TFTP server.
+###Flash Partitions
+
+    root@OpenWrt:/# cat /proc/mtd
+    dev:    size   erasesize  name
+    mtd0: 00180000 00001000 "uboot"
+    mtd1: 00002000 00001000 "data-ro"
+    mtd2: 00002000 00001000 "uEnv"
+    mtd3: 0007c000 00001000 "data-rw"
+    mtd4: 10000000 00040000 "firmware0"
+    mtd5: 10000000 00040000 "firmware1"
+
+There are two nand paritions `/dev/mtd4, /dev/mtd5` available for NAND boot.
+"Dual nandboot" is the default boot method set on Marduk platform. 
+
+There are mutliple ways of flash the ubifs image on one of the NAND parition.
+
+##### Flashing on uboot prompt
+Either you can copy the openwrt-pistachio-marduk-marduk_cc2520-ubifs.img on the USB drive or you can place the same on TFTP server.
 To set up TFTP server on your development PC, refer to [Setting up TFTP Server](#setting-up-tftp-server) section.
 
 1. Init flash device on given SPI bus and chip select:
+
 
         pistachio # sf probe 1:0
 
 2. Obtain an IP address (only needed if you are using TFTP server to load the image):
 
+
         pistachio # dhcp
 
 3. Define flash/nand partitions:
+
 
         pistachio # mtdpart default
 
 4. Erase partition:
 
-        pistachio # nand erase.part firmware0
+
+        pistachio # nand erase.part firmwareX
+_firmwareX needs to be replaced with firmware0 or firmware1._
 
 5. Loading the ubifs image
 
@@ -321,13 +347,52 @@ OR
 
 6. Initialize write to nand device:
 
-        pistachio # nand write 0xe000000 firmware0 ${filesize};
 
-7. Save nand boot environment variables
+        pistachio # nand write 0xe000000 firmwareX ${filesize};
+_firmwareX needs to be replaced with firmware0 or firmware1._
 
-        pistachio # setenv nandroot "ubi.mtd=firmware0 root=ubi0:rootfs rootfstype=ubifs"
-        pistachio # setenv bootcmd 'run nandboot'
+7. Select the NAND parition to boot from:
+
+
+        pistachio # setenv boot_partition X
+_X needs to be replaced with 0 or 1 depending upon firmware0 or firmware1 respectively._
+
+8. Save dual nand boot environment variables
+
+
+        pistachio # setenv nandroot ubi.mtd=firmware${boot_partition} root=ubi0:rootfs rootfstype=ubifs
+        pistachio # setenv bootcmd 'run dualnandboot'
         pistachio # saveenv
+
+##### Flashing on OpenWrt prompt
+
+You can use ubiformat utility to flash the ubifs image when system is booted up and running. *However extra care needs to be taken to select the appropriate mtd partition, as selecting a wrong partition may erase your bootloader completely.*
+
+1. Check the boot partion from which system is booted from:
+
+
+    root@OpenWrt:/# fw_printenv boot_partition
+    boot_partition=0
+If boot_partition is 0, then booted from firmware0 and if 1, then booted from firmware1.
+
+2. Flash the ubifs image on other partition.
+
+Select /dev/mtd1 for flashing on firmwareX
+
+    root@OpenWrt:/# ubiformat /dev/mtdX -y
+_Replace X with 0 or 1 depending upon firmware0 or firmware1 respectively._
+
+3. Select the NAND partition to boot from:
+
+
+    root@OpenWrt:/# fw_setenv boot_partition X
+_X needs to be replaced with 0 or 1 depending upon firmware0 or firmware1 respectively._
+
+4.Save the uboot environment and reboot.
+
+    root@OpenWrt:/# fw_setenv nandroot ubi.mtd=firmware${boot_partition} root=ubi0:rootfs rootfstype=ubifs
+    root@OpenWrt:/# fw_setenv bootcmd 'run dualnandboot'
+    root@OpenWrt:/# fw_saveenv
 
 ##System upgrade
 
@@ -338,6 +403,7 @@ Sysupgrade can now be used to flash ubifs images from within OpenWrt:
 You can download the ubifs image from webserver using wget or copy from USB drive.But the image must be put into /tmp as OpenWRT switches to a ramfs to do upgrade.
 
 ###Downloading ubifs image from webserver
+
     root@OpenWrt:/# cd /tmp
     root@OpenWrt:/# wget http://192.168.91.79:8080/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
 (Replace `192.168.91.79:/8080` with IP address:/Portno of your webserver)
@@ -346,31 +412,26 @@ You can download the ubifs image from webserver using wget or copy from USB driv
     root@OpenWrt:/# mount /dev/sda1 /mnt/cd /tmp
     root@OpenWrt:/# cp /mnt/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img /tmp
 
-The image will be flashed onto the mtd partition that is not in use (firmware0 or firmware1) then uboot is updated to boot from that partition. This requires the firmware0 and firmware1 implementation in uboot with a default environment. The default bootloader binary is based upon U-Boot 2015.07-rc2-299ac94, has this implementation.
+The image will be flashed onto the mtd partition that is not in use (firmware0 or firmware1) then uboot is updated to boot from that partition. 
 
 Pre-requisite :
-U-boot environment variables should be set as follows:
+U-boot environment variables should be set to default as follows:
 
-    pistachio # setenv bootcmd 'run dualnandboot'
-    pistachio # setenv bootfile uImage
-    pistachio # setenv fdtfile pistachio_marduk.dtb
+    pistachio # env default -a
+    pistachio # saveenv
 
 You can also set or print the u-boot environment variables from OpenWrt too:
 
     root@OpenWrt:/# fw_printenv
     root@OpenWrt:/# fw_setenv bootcmd 'run dualnandboot'
-    root@OpenWrt:/# fw_setenv bootfile uImage
-    root@OpenWrt:/# fw_setenv fdtfile pistachio_marduk.dtb
 
-Uboot variable bootcount is reset after successful boot.You can cross-check by reading:
-
-    root@OpenWrt:/# cat /sys/devices/platform/*uboot-count/bootcount
-    0
+###Fallback mechanism
+If image fails to boot in 5 successive attempts, then bootloader will try to boot image from alternate partition.
+Uboot variable bootcount is reset after successful boot.
 
 You should see the logs on the console as below:
 
-    root@OpenWrt:/tmp# sysupgrade openwrt-pistachio-marduk-marduk_cc2520-ubifs-sysup
-    grade.img
+    root@OpenWrt:/tmp# sysupgrade openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
     Saving config files...
     Sending TERM to remaining processes ... logd rpcd netifd odhcpd uhttpd dnsmasq awa_bootstrapd awa_clientd awa_serverd ntpd button_gateway_ button_gateway_ device_manager_ sleep ubusd
     Sending KILL to remaining processes ... device_manager_
@@ -379,36 +440,8 @@ You should see the logs on the console as below:
     Performing system upgrade...
     Current boot partiton  1
     Writing image to  firmware0
-    ubidetach: error!: cannot detach "/dev/mtd4"
-           error 19 (No such device)
-    ubiformat: mtd4 (nand), size 268435456 bytes (256.0 MiB), 1024 eraseblocks of 262144 bytes (256.0 KiB), min. I/O size 4096 bytes
-    libscan: scanning eraseblock 1023 -- 100 % complete
-    ubiformat: 1024 eraseblocks have valid erase counter, mean value is 4
-    ubiformat: flashing eraseblock 66 -- 100 % complete
-    ubiformat: formatting eraseblock 993 -- 96 % com[  628.426599] ubi1: attaching mtd4
-    ubiformat: formatting eraseblock 1023 -- 100 % complete
-    [  630.259102] ubi1: scanning is finished
-    [  630.303104] ubi1: volume 0 ("rootfs") re-sized from 65 to 980 LEBs
-    [  630.311869] ubi1: attached mtd4 (name "firmware0", size 256 MiB)
-    [  630.318678] ubi1: PEB size: 262144 bytes (256 KiB), LEB size: 253952 bytes
-    [  630.326342] ubi1: min./max. I/O unit sizes: 4096/4096, sub-page size 4096
-    [  630.333970] ubi1: VID header offset: 4096 (aligned 4096), data offset: 8192
-    [  630.341922] ubi1: good PEBs: 1024, bad PEBs: 0, corrupted PEBs: 0
-    [  630.348781] ubi1: user volume: 1, internal volumes: 1, max. volumes count: 128
-    [  630.356838] ubi1: max/mean erase counter: 8/5, WL threshold: 4096, image sequence number: 1295417059
-    [  630.367070] ubi1: available PEBs: 0, total reserved PEBs: 1024, PEBs reserved for bad PEB handling: 40
-    [  630.377584] ubi1: background thread "ubi_bgt1d" started, PID 2584
-    UBI device number 1, total 1024 LEBs (260046848 bytes, 248.0 MiB), available 0 LEBs (0 bytes), LEB size 253952 bytes (248.0 KiB)
-    [  630.491579] UBIFS (ubi1:0): background thread "ubifs_bgt1_0" started, PID 2607
-    [  630.623335] UBIFS (ubi1:0): start fixing up free space
-    [  630.831119] UBIFS (ubi1:0): free space fixup complete
-    [  630.895050] UBIFS (ubi1:0): UBIFS: mounted UBI device 1, volume 0, name "rootfs"
-    [  630.903499] UBIFS (ubi1:0): LEB size: 253952 bytes (248 KiB), min./max. I/O unit sizes: 4096 bytes/4096 bytes
-    [  630.914678] UBIFS (ubi1:0): FS size: 246333440 bytes (234 MiB, 970 LEBs), journal size 9404416 bytes (8 MiB, 38 LEBs)
-    [  630.926538] UBIFS (ubi1:0): reserved for root: 0 bytes (0 KiB)
-    [  630.933100] UBIFS (ubi1:0): media format: w4/r0 (latest is w4/r0), UUID D05F05D1-980F-432F-B6DC-DD583FEC53E5, small LPT model
-    [  631.028348] UBIFS (ubi1:0): un-mount UBI device 1
-    [  631.033687] UBIFS (ubi1:0): background thread "ubifs_bgt1_0" stops
+    .
+    .
     sysupgrade successful
     [  631.064624] reboot: Restarting system
 
@@ -439,11 +472,13 @@ You can check "ifconfig -a" to check list of interfaces. Ethernet, WiFi and 6loW
 
 1. 6loWPAN IP has been hardcoded to 2001:1418:0100::1/48. You can change that by editing /etc/config/network script and restarting the network daemon.
 
+
         $root@OpenWrt:/# /etc/init.d/network restart
 
 2. You can enable WiFi by default by following below steps:
 
 - set ssid and password for WiFi either at compile time from file target/linux/pistachio/base-files/etc/uci-defaults/config/wireless
+
 
         config wifi-iface
             option device       radio0
@@ -458,6 +493,7 @@ You can check "ifconfig -a" to check list of interfaces. Ethernet, WiFi and 6loW
         $root@OpenWrt:/# /etc/init.d/network restart
  
 - set default route for WiFi in target/linux/pistachio/base-files/etc/uci-defaults/config/network as
+
 
         option 'defaultroute' '1'
 
