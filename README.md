@@ -371,27 +371,31 @@ You can use ubiformat utility to flash the ubifs image when system is booted up 
 1. Check the boot partition from which system is booted from.
 
 
-    root@OpenWrt:/# fw_printenv boot_partition
+        root@OpenWrt:/# fw_printenv boot_partition
+
 _If boot_partition is 0, then booted from firmware0 and if 1, then booted from firmware1._
 
 2. Flash the ubifs image on other partition.
 
 
-    root@OpenWrt:/# ubiformat /dev/mtdX -y
+        root@OpenWrt:/# ubiformat /dev/mtdX -y
+
 _Replace X with 0 or 1 depending upon firmware0 or firmware1 respectively._
 
 3. Select the NAND partition to boot from.
 
 
-    root@OpenWrt:/# fw_setenv boot_partition X
+        root@OpenWrt:/# fw_setenv boot_partition X
+
 _X needs to be replaced with 0 or 1 depending upon firmware0 or firmware1 respectively._
 
 4. Save the uboot environment and reboot.
 
 
-    root@OpenWrt:/# fw_setenv nandroot ubi.mtd=firmware${boot_partition} root=ubi0:rootfs rootfstype=ubifs
-    root@OpenWrt:/# fw_setenv bootcmd 'run dualnandboot'
-    root@OpenWrt:/# fw_saveenv
+        root@OpenWrt:/# fw_setenv nandroot ubi.mtd=firmware${boot_partition} root=ubi0:rootfs rootfstype=ubifs
+        root@OpenWrt:/# fw_setenv bootcmd 'run dualnandboot'
+        root@OpenWrt:/# fw_saveenv
+
 
 ##System upgrade
 
