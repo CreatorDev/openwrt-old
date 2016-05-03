@@ -288,7 +288,7 @@ To use tftp boot, set the following environment variables
 
         pistachio # run ethboot
 
-####Boot from Flash
+##Boot from Flash
 
 This is the default boot method set on Marduk platform. Either you can copy the openwrt-pistachio-marduk-marduk_cc2520-ubifs.img on the USB drive or you can place the same on TFTP server.
 To set up TFTP server on your development PC, refer to [Setting up TFTP Server](#setting-up-tftp-server) section.
@@ -329,33 +329,110 @@ OR
         pistachio # setenv bootcmd 'run nandboot'
         pistachio # saveenv
 
+##System upgrade
 
-####Configure Network
+Sysupgrade can now be used to flash ubifs images from within OpenWrt:
+
+    root@OpenWrt:/# sysupgrade -v /tmp/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
+
+You can download the ubifs image from webserver using wget or copy from USB drive.But the image must be put into /tmp as OpenWRT switches to a ramfs to do upgrade.
+
+###Downloading ubifs image from webserver
+    root@OpenWrt:/# cd /tmp
+    root@OpenWrt:/# wget http://192.168.91.79:8080/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
+(Replace `192.168.91.79:/8080` with IP address:/Portno of your webserver)
+###Copying ubifs image from USB drive
+
+    root@OpenWrt:/# mount /dev/sda1 /mnt/cd /tmp
+    root@OpenWrt:/# cp /mnt/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img /tmp
+
+The image will be flashed onto the mtd partition that is not in use (firmware0 or firmware1) then uboot is updated to boot from that partition. This requires the firmware0 and firmware1 implementation in uboot with a default environment. The default bootloader binary is based upon U-Boot 2015.07-rc2-299ac94, has this implementation.
+
+Pre-requisite :
+U-boot environment variables should be set as follows:
+
+    pistachio # setenv bootcmd 'run dualnandboot'
+    pistachio # setenv bootfile uImage
+    pistachio # setenv fdtfile pistachio_marduk.dtb
+
+You can also set or print the u-boot environment variables from OpenWrt too:
+
+    root@OpenWrt:/# fw_printenv
+    root@OpenWrt:/# fw_setenv bootcmd 'run dualnandboot'
+    root@OpenWrt:/# fw_setenv bootfile uImage
+    root@OpenWrt:/# fw_setenv fdtfile pistachio_marduk.dtb
+
+Uboot variable bootcount is reset after successful boot.You can cross-check by reading:
+
+    root@OpenWrt:/# cat /sys/devices/platform/*uboot-count/bootcount
+    0
 
 You should see the logs on the console as below:
 
+    root@OpenWrt:/tmp# sysupgrade openwrt-pistachio-marduk-marduk_cc2520-ubifs-sysup
+    grade.img
+    Saving config files...
+    Sending TERM to remaining processes ... logd rpcd netifd odhcpd uhttpd dnsmasq awa_bootstrapd awa_clientd awa_serverd ntpd button_gateway_ button_gateway_ device_manager_ sleep ubusd
+    Sending KILL to remaining processes ... device_manager_
+    Switching to ramdisk...
+    [  612.202026] UBIFS (ubi0:0): background thread "ubifs_bgt0_0" stops
+    Performing system upgrade...
+    Current boot partiton  1
+    Writing image to  firmware0
+    ubidetach: error!: cannot detach "/dev/mtd4"
+           error 19 (No such device)
+    ubiformat: mtd4 (nand), size 268435456 bytes (256.0 MiB), 1024 eraseblocks of 262144 bytes (256.0 KiB), min. I/O size 4096 bytes
+    libscan: scanning eraseblock 1023 -- 100 % complete
+    ubiformat: 1024 eraseblocks have valid erase counter, mean value is 4
+    ubiformat: flashing eraseblock 66 -- 100 % complete
+    ubiformat: formatting eraseblock 993 -- 96 % com[  628.426599] ubi1: attaching mtd4
+    ubiformat: formatting eraseblock 1023 -- 100 % complete
+    [  630.259102] ubi1: scanning is finished
+    [  630.303104] ubi1: volume 0 ("rootfs") re-sized from 65 to 980 LEBs
+    [  630.311869] ubi1: attached mtd4 (name "firmware0", size 256 MiB)
+    [  630.318678] ubi1: PEB size: 262144 bytes (256 KiB), LEB size: 253952 bytes
+    [  630.326342] ubi1: min./max. I/O unit sizes: 4096/4096, sub-page size 4096
+    [  630.333970] ubi1: VID header offset: 4096 (aligned 4096), data offset: 8192
+    [  630.341922] ubi1: good PEBs: 1024, bad PEBs: 0, corrupted PEBs: 0
+    [  630.348781] ubi1: user volume: 1, internal volumes: 1, max. volumes count: 128
+    [  630.356838] ubi1: max/mean erase counter: 8/5, WL threshold: 4096, image sequence number: 1295417059
+    [  630.367070] ubi1: available PEBs: 0, total reserved PEBs: 1024, PEBs reserved for bad PEB handling: 40
+    [  630.377584] ubi1: background thread "ubi_bgt1d" started, PID 2584
+    UBI device number 1, total 1024 LEBs (260046848 bytes, 248.0 MiB), available 0 LEBs (0 bytes), LEB size 253952 bytes (248.0 KiB)
+    [  630.491579] UBIFS (ubi1:0): background thread "ubifs_bgt1_0" started, PID 2607
+    [  630.623335] UBIFS (ubi1:0): start fixing up free space
+    [  630.831119] UBIFS (ubi1:0): free space fixup complete
+    [  630.895050] UBIFS (ubi1:0): UBIFS: mounted UBI device 1, volume 0, name "rootfs"
+    [  630.903499] UBIFS (ubi1:0): LEB size: 253952 bytes (248 KiB), min./max. I/O unit sizes: 4096 bytes/4096 bytes
+    [  630.914678] UBIFS (ubi1:0): FS size: 246333440 bytes (234 MiB, 970 LEBs), journal size 9404416 bytes (8 MiB, 38 LEBs)
+    [  630.926538] UBIFS (ubi1:0): reserved for root: 0 bytes (0 KiB)
+    [  630.933100] UBIFS (ubi1:0): media format: w4/r0 (latest is w4/r0), UUID D05F05D1-980F-432F-B6DC-DD583FEC53E5, small LPT model
+    [  631.028348] UBIFS (ubi1:0): un-mount UBI device 1
+    [  631.033687] UBIFS (ubi1:0): background thread "ubifs_bgt1_0" stops
+    sysupgrade successful
+    [  631.064624] reboot: Restarting system
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-  BusyBox v1.24.1 (2016-03-04 17:43:09 IST) built-in shell (ash)
+On successful, it will restart the system and you should following logs on the console:
 
-  _______                     ________        __
- |       |.-----.-----.-----.|  |  |  |.----.|  |_
- |   -   ||  _  |  -__|     ||  |  |  ||   _||   _|
- |_______||   __|_____|__|__||________||__|  |____|
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    BusyBox v1.24.1 (2016-05-02 10:15:17 IST) built-in shell (ash)
+    _______                     ________        __
+    |       |.-----.-----.-----.|  |  |  |.----.|  |_
+    |   -   ||  _  |  -__|     ||  |  |  ||   _||   _|
+    |_______||   __|_____|__|__||________||__|  |____|
           |__| W I R E L E S S   F R E E D O M
- -----------------------------------------------------
- DESIGNATED DRIVER (Bleeding Edge, r48138)
- -----------------------------------------------------
-  * 2 oz. Orange Juice         Combine all juices in a
-  * 2 oz. Pineapple Juice      tall glass filled with
-  * 2 oz. Grapefruit Juice     ice, stir well.
-  * 2 oz. Cranberry Juice
+    -----------------------------------------------------
+    DESIGNATED DRIVER (Bleeding Edge, r48138)
+    -----------------------------------------------------
+    * 2 oz. Orange Juice         Combine all juices in a
+    * 2 oz. Pineapple Juice      tall glass filled with
+    * 2 oz. Grapefruit Juice     ice, stir well.
+    * 2 oz. Cranberry Juice
+    $root@OpenWrt:/#
+    $root@OpenWrt:/#
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-$root@OpenWrt:/#
-$root@OpenWrt:/#
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
+##Configure Network
 You can check "ifconfig -a" to check list of interfaces. Ethernet, WiFi and 6loWPAN should be up.
 
 **Note:**
