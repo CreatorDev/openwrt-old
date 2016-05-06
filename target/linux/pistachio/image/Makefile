@@ -93,7 +93,6 @@ endef
 
 define CopyDTB
 #ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_DTB),)
-	$(INSTALL_DIR) $(TARGET_DIR)/boot
 
 ifneq ($(1),)
 	$(CP) $(KDIR)/$(1).dtb $(TARGET_DIR)/boot/
