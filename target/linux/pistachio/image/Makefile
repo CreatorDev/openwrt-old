@@ -87,8 +87,20 @@ endif
 endef
 
 define Image/BuildKernel
-	$(call MkDTB,pistachio_$(DEVICE_DTS))
+	$(call MkDTB/$(PROFILE))
 	$(call Image/BuildKernel/uImage,$(PROFILE))
+endef
+
+define CopyDTB
+#ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_DTB),)
+	$(INSTALL_DIR) $(TARGET_DIR)/boot
+
+ifneq ($(1),)
+	$(CP) $(KDIR)/$(1).dtb $(TARGET_DIR)/boot/
+	ln -sf boot/$(1).dtb $(TARGET_DIR)/pistachio_$(BOARDNAME).dtb
+endif
+#endif
+
 endef
 
 define Image/InstallKernel/copy
@@ -102,15 +114,7 @@ define Image/InstallKernel/copy
 #endif
 
 #endif
-
-#ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_DTB),)
-	$(INSTALL_DIR) $(TARGET_DIR)/boot
-
-ifneq ($(1),)
-	$(CP) $(KDIR)/pistachio_$(DEVICE_DTS).dtb $(TARGET_DIR)/boot/
-	ln -sf boot/pistachio_$(DEVICE_DTS).dtb $(TARGET_DIR)/pistachio_$(BOARDNAME).dtb
-endif
-#endif
+	$(call CopyDTB/$(PROFILE))
 
 endef
 

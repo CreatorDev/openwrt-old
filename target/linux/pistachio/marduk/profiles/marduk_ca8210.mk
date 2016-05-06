@@ -29,7 +29,6 @@ define Profile/marduk_ca8210
               wpan-tools tcpdump uhttpd uboot-envtools \
               alsa-lib alsa-utils alsa-utils-tests i2c-tools \
               iw hostapd wpa-supplicant kmod-uccp420wlan kmod-cfg80211
-    DEVICE_DTS:=marduk_ca8210
 endef
 
 define Profile/marduk_ca8210/Description
@@ -41,5 +40,6 @@ marduk_ca8210_UBIFS_OPTS:="-m 4096 -e 253952 -c 1580"
 marduk_ca8210_UBI_OPTS:="-m 4096 -p 262144 -s 4096"
 
 Image/Build/Profile/marduk_ca8210=$(call Image/BuildNAND/$(1),$(1),marduk_ca8210)
-
+MkDTB/marduk_ca8210=$(call MkDTB,pistachio_marduk_ca8210)
+CopyDTB/marduk_ca8210=$(call CopyDTB,pistachio_marduk_ca8210)
 $(eval $(call Profile,marduk_ca8210))
