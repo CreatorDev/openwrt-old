@@ -24,8 +24,8 @@
 #
 
 define Profile/marduk_cc2520
-	NAME:=Basic platform profile for Marduk with TI cc2520
-	PACKAGES:=kmod-marduk-cc2520 wpan-tools
+    NAME:=Basic platform profile for Marduk with TI cc2520
+    PACKAGES:=kmod-marduk-cc2520 wpan-tools
 endef
 
 define Profile/marduk_cc2520/Description
