@@ -30,7 +30,6 @@ define Profile/marduk_cc2520
 		alsa-lib alsa-utils alsa-utils-tests i2c-tools \
 		iw hostapd wpa-supplicant kmod-uccp420wlan kmod-cfg80211 \
 		kmod-leds-gpio
-    DEVICE_DTS:=marduk_cc2520
 endef
 
 define Profile/marduk_cc2520/Description
@@ -42,5 +41,6 @@ marduk_cc2520_UBIFS_OPTS:="-m 4096 -e 253952 -c 1580"
 marduk_cc2520_UBI_OPTS:="-m 4096 -p 262144 -s 4096"
 
 Image/Build/Profile/marduk_cc2520=$(call Image/BuildNAND/$(1),$(1),marduk_cc2520)
-
+MkDTB/marduk_cc2520=$(call MkDTB,pistachio_marduk_cc2520)
+CopyDTB/marduk_cc2520=$(call CopyDTB,pistachio_marduk_cc2520)
 $(eval $(call Profile,marduk_cc2520))

@@ -31,7 +31,6 @@ define Profile/marduk_cc2520_wifi
         iw hostapd wpa-supplicant wpa-cli iperf fping \
         kmod-uccp420wlan kmod-cfg80211 \
         kmod-leds-gpio
-    DEVICE_DTS:=marduk_cc2520
 endef
 
 define Profile/marduk_cc2520_wifi/Description
@@ -43,5 +42,6 @@ marduk_cc2520_wifi_UBIFS_OPTS:="-m 4096 -e 253952 -c 1580"
 marduk_cc2520_wifi_UBI_OPTS:="-m 4096 -p 262144 -s 4096"
 
 Image/Build/Profile/marduk_cc2520_wifi=$(call Image/BuildNAND/$(1),$(1),marduk_cc2520_wifi)
-
+MkDTB/marduk_cc2520_wifi=$(call MkDTB,pistachio_marduk_cc2520)
+CopyDTB/marduk_cc2520_wifi=$(call CopyDTB,pistachio_marduk_cc2520)
 $(eval $(call Profile,marduk_cc2520_wifi))
