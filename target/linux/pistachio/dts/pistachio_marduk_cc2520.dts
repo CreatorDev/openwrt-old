@@ -52,7 +52,7 @@
 			img,event-timer = <&event_timer>;
 
 			pinctrl-names = "default";
-			pinctrl-0 = <&dac_clk_pin>, <&i2s_mclk_pin>;
+			pinctrl-0 = <&i2s_mclk_pin>;
 
 			spdif-out {
 				cpu-dai = <&spdif_out>;
@@ -140,7 +140,7 @@
 		heartbeat {
 			label = "marduk:red:heartbeat";
 			gpios = <&gpio4 12 GPIO_ACTIVE_HIGH>;
-			linux,default-trigger = "heartbeat";
+			linux,default-trigger = "timer";
 		};
 	};
 };
