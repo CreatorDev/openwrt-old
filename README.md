@@ -65,21 +65,37 @@ Load Marduk platform specific OpenWrt configuration for Pistachio.
         Target Profile (Basic platform profile for Marduk)  ---> 
             (X) Basic platform profile for Marduk with TI cc2520
             ( ) Basic platform profile for Marduk with Cascoda ca8210
+            ( ) Wifi testing profile for Marduk with TI cc2520
 
-You can also load Marduk platform specific OpenWrt configuration for Pistachio by adding following into .config file.
+You can also load Marduk platform (with TI cc2520) specific OpenWrt configuration for Pistachio by adding following into .config file.
 
     $ echo "CONFIG_TARGET_pistachio=y" > .config
     $ echo "CONFIG_TARGET_pistachio_marduk_marduk_cc2520=y" >> .config
+
+You can also load Marduk platform (with Cascoda ca8210) specific OpenWrt configuration for Pistachio by adding following into .config file.
+
+    $ echo "CONFIG_TARGET_pistachio=y" > .config
+    $ echo "CONFIG_TARGET_pistachio_marduk_marduk_ca8210=y" >> .config
 
 Now build OpenWrt in standard way:
 
     $ make V=s -j1
 
 Once the build is completed, you will find the resulting output i.e. images, dtbs and rootfs at "bin/pistachio", depending upon the selected profile.
+Where PROFILE can be marduk_cc2520, marduk_ca8210, marduk_cc2520_wifi and VERSION is whatever mentioned in CONFIG_VERSION_NUMBER. By default VERSION is left blank.
+
+- openwrt-$(VERSION)-pistachio-pistachio_$(PROFILE)-uImage
+- openwrt-$(VERSION)-pistachio-pistachio_$(PROFILE)-uImage-initramfs
+- openwrt-$(VERSION)-pistachio-marduk-$(PROFILE)-rootfs.tar.gz
+- pistachio_marduk_cc2520.dtb (for marduk_cc2520 board) or
+- pistachio_marduk_ca8210.dtb (for marduk_ca8210 board)
+
+For simplicity, it has been assumed that marduk_cc2520 PROFILE has been selected and hence the filenames are as follows: 
 - openwrt-pistachio-pistachio_marduk_cc2520-uImage
-- openwrt-pistachio-pistachio_marduk_cc2520-uImage-initramfs
-- openwrt-pistachio-marduk-marduk-cc2520-rootfs.tar.gz
+- openwrt-$(VERSION)-pistachio-pistachio_marduk_cc2520-uImage-initramfs
+- openwrt-$(VERSION)-pistachio-marduk-marduk_cc2520-rootfs.tar.gz
 - pistachio_marduk_cc2520.dtb
+Please replace the filenames depending upon your selected PROFILE and the board.
 
 ## Customising your OpenWrt
 You can configure OpenWrt from scratch but it's best to start from a base profile
@@ -314,8 +330,9 @@ To set up TFTP server on your development PC, refer to [Setting up TFTP Server](
 
         pistachio # sf probe 1:0
 
-2. Obtain an IP address (only needed if you are using TFTP server to load the image):
+2. Set MAC address and Obtain an IP address (only needed if you are using TFTP server to load the image):
 
+        pistachio # setenv ethaddr <00:19:F5:xx:xx:xx>
         pistachio # dhcp
 
 3. Define flash/nand partitions:
@@ -337,6 +354,7 @@ OR
 
         pistachio # usb start && ext4load usb 0 0x0E000000 openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
 
+_Please note that maximum permissible size of ubifs flash image is 16MB. If you need to flash bigger size images, then need to change the load address._
 6. Initialize write to nand device:
 
         pistachio # nand write 0xe000000 firmwareX ${filesize};
@@ -371,6 +389,9 @@ _Replace X with **4** or **5** depending upon firmware0 or firmware1 respectivel
 _X needs to be replaced with 0 or 1 depending upon firmware0 or firmware1 respectively._
 
 ##System upgrade
+
+If booted using any of the above methods, then you can upgrade your OpenWrt image using sysupgrade utility.
+However please note that sysupgrade cannot be used if openwrt image is not there in flash. In such cases, please refer [Flashing on uboot prompt], to update the ubifs image into nand flash. 
 
 You can download the ubifs image from webserver using wget or copy from USB drive.But the image must be put into /tmp as OpenWRT switches to a ramfs to do upgrade.
 
