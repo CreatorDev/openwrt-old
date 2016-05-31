@@ -67,12 +67,12 @@ Load Marduk platform specific OpenWrt configuration for Pistachio.
             ( ) Basic platform profile for Marduk with Cascoda ca8210
             ( ) Wifi testing profile for Marduk with TI cc2520
 
-You can also load Marduk platform (with TI cc2520) specific OpenWrt configuration for Pistachio by adding following into .config file.
+Alternatively, you can also load Marduk platform with TI cc2520 specific OpenWrt configuration for IMG Pistachio by adding following into .config file:
 
     $ echo "CONFIG_TARGET_pistachio=y" > .config
     $ echo "CONFIG_TARGET_pistachio_marduk_marduk_cc2520=y" >> .config
 
-You can also load Marduk platform (with Cascoda ca8210) specific OpenWrt configuration for Pistachio by adding following into .config file.
+Similarly, you can do the same for Marduk platform with Cascoda ca8210 specific OpenWrt configuration:
 
     $ echo "CONFIG_TARGET_pistachio=y" > .config
     $ echo "CONFIG_TARGET_pistachio_marduk_marduk_ca8210=y" >> .config
@@ -90,12 +90,11 @@ Where PROFILE can be marduk_cc2520, marduk_ca8210, marduk_cc2520_wifi and VERSIO
 - pistachio_marduk_cc2520.dtb (for marduk_cc2520 board) or
 - pistachio_marduk_ca8210.dtb (for marduk_ca8210 board)
 
-For simplicity, it has been assumed that marduk_cc2520 PROFILE has been selected and hence the filenames are as follows: 
-- openwrt-pistachio-pistachio_marduk_cc2520-uImage
-- openwrt-$(VERSION)-pistachio-pistachio_marduk_cc2520-uImage-initramfs
-- openwrt-$(VERSION)-pistachio-marduk-marduk_cc2520-rootfs.tar.gz
+For simplicity, let's assume that marduk_cc2520 PROFILE has been selected and VERSION as 1.0.0 hence the filenames will be as follows: 
+- openwrt-1.0.0-pistachio-pistachio_marduk_cc2520-uImage
+- openwrt-1.0.0-pistachio-pistachio_marduk_cc2520-uImage-initramfs
+- openwrt-1.0.0-pistachio-marduk-marduk_cc2520-rootfs.tar.gz
 - pistachio_marduk_cc2520.dtb
-Please replace the filenames depending upon your selected PROFILE and the board.
 
 ## Customising your OpenWrt
 You can configure OpenWrt from scratch but it's best to start from a base profile
@@ -177,12 +176,12 @@ Mount the USB drive:
 
     $ sudo mount /dev/sdx1 /mnt/
 
-To put filesystem on USB you will need 'openwrt-pistachio-marduk-marduk-cc2520-rootfs.tar.gz' which is available at "openwrt/bin/pistachio"
+To put filesystem on USB you will need 'openwrt-1.0.0-pistachio-marduk-marduk-cc2520-rootfs.tar.gz' which is available at "openwrt/bin/pistachio"
 
-Extract the openwrt-pistachio-marduk-marduk-cc2520-rootfs.tar.gz onto the partition you just created:
+Extract the openwrt-1.0.0-pistachio-marduk-marduk-cc2520-rootfs.tar.gz onto the partition you just created:
 
     $ sudo rm -rf /mnt/*
-    $ sudo tar -xf bin/pistachio/openwrt-pistachio-marduk-marduk-cc2520-rootfs.tar.gz -C /mnt/
+    $ sudo tar -xf bin/pistachio/openwrt-1.0.0-pistachio-marduk-marduk-cc2520-rootfs.tar.gz -C /mnt/
     $ sudo umount /mnt/
 
 Run "sync" command to synchronize the data properly on the USB drive:
@@ -224,12 +223,12 @@ Mount the SD media:
 
     $ sudo mount /dev/sdc1 /mnt/
 
-To put filesystem on SD you will need 'openwrt-pistachio-marduk-marduk-cc2520-rootfs.tar.gz' which is available at "openwrt/bin/pistachio"
+To put filesystem on SD you will need 'openwrt-1.0.0-pistachio-marduk-marduk-cc2520-rootfs.tar.gz' which is available at "openwrt/bin/pistachio"
 
-Extract the openwrt-pistachio-marduk-marduk-cc2520-rootfs.tar.gz onto the partition you just created:
+Extract the openwrt-1.0.0-pistachio-marduk-marduk-cc2520-rootfs.tar.gz onto the partition you just created:
 
     $ sudo rm -rf /mnt/*
-    $ sudo tar -xf bin/pistachio/openwrt-pistachio-marduk-marduk-cc2520-rootfs.tar.gz -C /mnt/
+    $ sudo tar -xf bin/pistachio/openwrt-1.0.0-pistachio-marduk-marduk-cc2520-rootfs.tar.gz -C /mnt/
     $ sudo umount /mnt/
 
 Run "sync" command to synchronize the data properly on the SD card:
@@ -251,7 +250,7 @@ To make boot from SD card as default boot method, run the following commands on 
 For TFTP boot, you will need TFTP server serving kernel image (uImage), dtb (*.dtb)
 and initramfs filesystem.
 
-    $ sudo cp bin/pistachio/openwrt-pistachio-pistachio_marduk_cc2520-uImage-initramfs /tftpboot/uImage
+    $ sudo cp bin/pistachio/openwrt-1.0.0-pistachio-pistachio_marduk_cc2520-uImage-initramfs /tftpboot/uImage
     $ sudo cp bin/pistachio/pistachio_marduk_cc2520.dtb /tftpboot/pistachio_marduk.dtb
 
 ### Setting up TFTP Server
@@ -323,7 +322,7 @@ There are two nand paritions `/dev/mtd4, /dev/mtd5` available for NAND boot.
 There are mutliple ways of flash the ubifs image on one of the NAND parition.
 
 ##### Flashing on uboot prompt
-Either you can copy the openwrt-pistachio-marduk-marduk_cc2520-ubifs.img on the USB drive or you can place the same on TFTP server.
+Either you can copy the openwrt-1.0.0-pistachio-marduk-marduk_cc2520-ubifs.img on the USB drive or you can place the same on TFTP server.
 To set up TFTP server on your development PC, refer to [Setting up TFTP Server](#setting-up-tftp-server) section.
 
 1. Init flash device on given SPI bus and chip select:
@@ -346,13 +345,13 @@ _firmwareX needs to be replaced with firmware0 or firmware1._
 
 5. Loading the ubifs image
 
-    Copy the openwrt-pistachio-marduk-marduk_cc2520-ubifs.img to TFTP server (/tftproot) and load from TFTP server:
+    Copy the openwrt-1.0.0-pistachio-marduk-marduk_cc2520-ubifs.img to TFTP server (/tftproot) and load from TFTP server:
 
-        pistachio # setenv serverip <development_PC_IP> && tftpboot 0xe000000 openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
+        pistachio # setenv serverip <development_PC_IP> && tftpboot 0xe000000 openwrt-1.0.0-pistachio-marduk-marduk_cc2520-ubifs.img
 OR
-    Copy the openwrt-pistachio-marduk-marduk_cc2520-ubifs.img to (ext4 formatted) USB drive and load from USB drive:
+    Copy the openwrt-1.0.0-pistachio-marduk-marduk_cc2520-ubifs.img to (ext4 formatted) USB drive and load from USB drive:
 
-        pistachio # usb start && ext4load usb 0 0x0E000000 openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
+        pistachio # usb start && ext4load usb 0 0x0E000000 openwrt-1.0.0-pistachio-marduk-marduk_cc2520-ubifs.img
 
 _Please note that maximum permissible size of ubifs flash image is 16MB. If you need to flash bigger size images, then need to change the load address._
 6. Initialize write to nand device:
@@ -380,7 +379,7 @@ _If boot_partition is 0, then booted from firmware0 and if 1, then booted from f
 
 2. Flash the ubifs image on other partition.
 
-        root@OpenWrt:/# ubiformat /dev/mtdX -y -f openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
+        root@OpenWrt:/# ubiformat /dev/mtdX -y -f openwrt-1.0.0-pistachio-marduk-marduk_cc2520-ubifs.img
 _Replace X with **4** or **5** depending upon firmware0 or firmware1 respectively._
 
 3. Select the NAND partition to boot from and reboot.
@@ -398,12 +397,12 @@ You can download the ubifs image from webserver using wget or copy from USB driv
 ###Downloading ubifs image from webserver
 
     root@OpenWrt:/# cd /tmp
-    root@OpenWrt:/# wget http://webserver/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
+    root@OpenWrt:/# wget http://webserver/openwrt-1.0.0-pistachio-marduk-marduk_cc2520-ubifs.img
 
 ###Copying ubifs image from USB drive
 
     root@OpenWrt:/# mount /dev/sda1 /mnt/
-    root@OpenWrt:/# cp /mnt/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img /tmp
+    root@OpenWrt:/# cp /mnt/openwrt-1.0.0-pistachio-marduk-marduk_cc2520-ubifs.img /tmp
 
 The image will be flashed onto the mtd partition that is not in use (firmware0 or firmware1) then uboot is updated to boot from that partition. 
 
@@ -420,11 +419,11 @@ Uboot variable bootcount is reset after successful boot.
 ###Upgrading the flash image
 Sysupgrade can now be used to flash ubifs images from within OpenWrt:
 
-    root@OpenWrt:/# sysupgrade -v /tmp/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
+    root@OpenWrt:/# sysupgrade -v /tmp/openwrt-1.0.0-pistachio-marduk-marduk_cc2520-ubifs.img
 
 You should see the logs on the console as below:
 
-    root@OpenWrt:/# sysupgrade /tmp/openwrt-pistachio-marduk-marduk_cc2520-ubifs.img
+    root@OpenWrt:/# sysupgrade /tmp/openwrt-1.0.0-pistachio-marduk-marduk_cc2520-ubifs.img
     Saving config files...
     Sending TERM to remaining processes ... logd rpcd netifd odhcpd uhttpd dnsmasq awa_bootstrapd awa_clientd awa_serverd ntpd button_gateway_ button_gateway_ device_manager_ sleep ubusd
     Sending KILL to remaining processes ... device_manager_
