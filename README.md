@@ -389,8 +389,7 @@ _X needs to be replaced with 0 or 1 depending upon firmware0 or firmware1 respec
 
 ##System upgrade
 
-If booted using any of the above methods, then you can upgrade your OpenWrt image using sysupgrade utility.
-However please note that sysupgrade cannot be used if openwrt image is not there in flash. In such cases, please refer [Flashing on uboot prompt](#flashing-on-uboot-prompt), to update the ubifs image into nand flash. 
+You can upgrade your existing OpenWrt image using sysupgrade utility. However please note that sysupgrade cannot be used if openwrt image is not there in flash. In such cases, please refer [Flashing on uboot prompt](#flashing-on-uboot-prompt), to update the ubifs image into nand flash. 
 
 You can download the ubifs image from webserver using wget or copy from USB drive.But the image must be put into /tmp as OpenWRT switches to a ramfs to do upgrade.
 
@@ -411,6 +410,7 @@ U-boot environment variables should be set to default as follows:
 
     pistachio # env default -a
     pistachio # saveenv
+This is not required always, but it is required only for the first time when you are doing the system upgrade.
 
 ###Fallback mechanism
 If image fails to boot in 5 successive attempts, then bootloader will try to boot image from alternate partition.
