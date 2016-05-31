@@ -391,7 +391,7 @@ _X needs to be replaced with 0 or 1 depending upon firmware0 or firmware1 respec
 ##System upgrade
 
 If booted using any of the above methods, then you can upgrade your OpenWrt image using sysupgrade utility.
-However please note that sysupgrade cannot be used if openwrt image is not there in flash. In such cases, please refer [Flashing on uboot prompt], to update the ubifs image into nand flash. 
+However please note that sysupgrade cannot be used if openwrt image is not there in flash. In such cases, please refer [Flashing on uboot prompt](#flashing-on-uboot-prompt), to update the ubifs image into nand flash. 
 
 You can download the ubifs image from webserver using wget or copy from USB drive.But the image must be put into /tmp as OpenWRT switches to a ramfs to do upgrade.
 
