@@ -1,0 +1,50 @@
+From e8fd42209a0fc7d36c789d6c8ff767ec1d9acff4 Mon Sep 17 00:00:00 2001
+From: Piotr Nakraszewicz <piotr.nakraszewicz@imgtec.com>
+Date: Tue, 15 Sep 2015 14:49:49 +0200
+Subject: Revert "pistachio: cpu-freq: update freq table."
+
+This reverts commit f6cd0ba7dbe4ff600e5fad81f75df6cd6675ebd3.
+
+Platform hangs with no output on serial with this patch.
+Hence reverting.
+
+Change-Id: Ib57dc8411a818c90b62f2ed7cf053951b85b4ce3
+Signed-off-by: Piotr Nakraszewicz <piotr.nakraszewicz@imgtec.com>
+---
+ drivers/clk/pistachio/clk-pistachio.c | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
+index 7271c4e..b377760 100644
+--- a/drivers/clk/pistachio/clk-pistachio.c
++++ b/drivers/clk/pistachio/clk-pistachio.c
+@@ -149,20 +149,12 @@ static struct pistachio_mux pistachio_muxes[] __initdata = {
+ };
+ 
+ static struct pistachio_pll_rate_table mips_pll_rates[] = {
+-	INT_PLL_RATES(52000000, 208000000, 5, 40,  2, 1),
+-	INT_PLL_RATES(52000000, 234000000, 5, 45,  2, 1),
+-	INT_PLL_RATES(52000000, 260000000, 5, 50,  2, 1),
+-	INT_PLL_RATES(52000000, 286000000, 5, 55,  2, 1),
+-	INT_PLL_RATES(52000000, 312000000, 5, 60,  2, 1),
+-	INT_PLL_RATES(52000000, 338000000, 5, 65,  2, 1),
+-	INT_PLL_RATES(52000000, 364000000, 5, 70,  2, 1),
+-	INT_PLL_RATES(52000000, 390000000, 5, 75,  2, 1),
+-	INT_PLL_RATES(52000000, 416000000, 5, 80,  2, 1),
+-	INT_PLL_RATES(52000000, 442000000, 5, 85,  2, 1),
+-	INT_PLL_RATES(52000000, 468000000, 5, 90,  2, 1),
+-	INT_PLL_RATES(52000000, 494000000, 5, 95,  2, 1),
+-	INT_PLL_RATES(52000000, 520000000, 5, 100, 2, 1),
+-	INT_PLL_RATES(52000000, 546000000, 5, 105, 2, 1),
++	INT_PLL_RATES(52000000, 416000000, 1, 16, 2, 1),
++	INT_PLL_RATES(52000000, 442000000, 1, 17, 2, 1),
++	INT_PLL_RATES(52000000, 468000000, 1, 18, 2, 1),
++	INT_PLL_RATES(52000000, 494000000, 1, 19, 2, 1),
++	INT_PLL_RATES(52000000, 520000000, 1, 20, 2, 1),
++	INT_PLL_RATES(52000000, 546000000, 1, 21, 2, 1),
+ };
+ 
+ static struct pistachio_pll_rate_table wifi_pll_rates[] = {
+-- 
+1.9.1
+

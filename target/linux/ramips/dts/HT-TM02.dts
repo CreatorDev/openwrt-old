@@ -1,6 +1,6 @@
 /dts-v1/;
 
-/include/ "rt5350.dtsi"
+#include "rt5350.dtsi"
 
 / {
 	compatible = "HT-TM02", "ralink,rt5350-soc";
@@ -63,6 +63,7 @@
 
 	esw@10110000 {
 		mediatek,portmap = <0x10>;
+		mediatek,portdisable = <0x2f>;
 	};
 
 	wmac@10180000 {

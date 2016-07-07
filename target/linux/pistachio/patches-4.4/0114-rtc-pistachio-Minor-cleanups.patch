@@ -1,0 +1,110 @@
+From 787986eca33f2d1d41621b6f87f0d112ccfff9b4 Mon Sep 17 00:00:00 2001
+From: Govindraj Raja <Govindraj.Raja@imgtec.com>
+Date: Fri, 29 Apr 2016 14:09:05 +0100
+Subject: rtc: pistachio: Minor cleanups
+
+* Minor cleanups preparing for upstreaming.
+* Moving to sycon-mfd for sharing timer1 and timer2 block
+  with timer0 block used as clocksource.
+
+Change-Id: Ie051baf8d2be83d267fdbb7dbe5960c2cb26d74f
+Signed-off-by: Govindraj Raja <Govindraj.Raja@imgtec.com>
+---
+ drivers/rtc/rtc-pistachio.c | 27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/rtc/rtc-pistachio.c b/drivers/rtc/rtc-pistachio.c
+index 8d8794f..c385024 100644
+--- a/drivers/rtc/rtc-pistachio.c
++++ b/drivers/rtc/rtc-pistachio.c
+@@ -19,6 +19,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_irq.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/rtc.h>
+@@ -66,7 +67,8 @@ struct pistachio_rtc {
+ 	spinlock_t counter_lock, timer_lock;
+ 	struct clk *sys_clk, *slow_clk;
+ 	u64 timer_reload_ns, alarm_secs;
+-	void __iomem *timer_base;
++	struct regmap *timer_regmap;
++
+ 	int timer_irq, alarm_irq;
+ 	bool alarm_wakeup_en;
+ 	u32 ct1_idx, ct2_idx;
+@@ -74,13 +76,16 @@ struct pistachio_rtc {
+ 
+ static inline u32 gpt_readl(u32 offset, struct pistachio_rtc *priv, u32 idx)
+ {
+-	return readl(priv->timer_base + 0x20 * idx + offset);
++	u32 val;
++
++	regmap_read(priv->timer_regmap, ((0x20 * idx) + offset), &val);
++	return val;
+ }
+ 
+-static inline void gpt_writel(u32 value, u32 offset, struct pistachio_rtc *priv,
++static inline void gpt_writel(u32 val, u32 offset, struct pistachio_rtc *priv,
+ 				u32 idx)
+ {
+-	writel(value, priv->timer_base + 0x20 * idx + offset);
++	regmap_write(priv->timer_regmap, ((0x20 * idx) + offset), val);
+ }
+ 
+ static inline u32 counter1_readl(u32 offset, struct pistachio_rtc *priv)
+@@ -164,6 +169,7 @@ static cycle_t pistachio_timer1_cc_read(const struct cyclecounter *cc)
+ 	overflw = counter1_readl(TIMER_CURRENT_OVERFLOW_VALUE, priv);
+ 	counter = counter1_readl(TIMER_CURRENT_VALUE, priv);
+ 	tot_cyc = ~counter;
++
+ 	if (overflw) {
+ 		/* In case of any overflows adjust time. */
+ 		if (overflw - 1)
+@@ -317,9 +323,9 @@ static irqreturn_t pistachio_alarm_handler(int irq, void *dev)
+ 
+ static int pistachio_rtc_probe(struct platform_device *pdev)
+ {
++	struct device_node *np = pdev->dev.of_node;
+ 	struct pistachio_rtc *priv;
+ 	struct regmap *periph_regs;
+-	struct resource *res_regs;
+ 	unsigned long rate;
+ 	int ret = 0;
+ 	u32 mult, shift;
+@@ -330,17 +336,16 @@ static int pistachio_rtc_probe(struct platform_device *pdev)
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+-	res_regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->timer_base = devm_ioremap_resource(&pdev->dev, res_regs);
+-	if (IS_ERR(priv->timer_base))
+-		return PTR_ERR(priv->timer_base);
++	priv->timer_regmap = syscon_node_to_regmap(np->parent);
++        if (IS_ERR(priv->timer_regmap))
++		return PTR_ERR(priv->timer_regmap);
+ 
+ 	spin_lock_init(&priv->counter_lock);
+ 	spin_lock_init(&priv->timer_lock);
+ 	priv->ct1_idx = TIMER1_IDX;
+ 	priv->ct2_idx = TIMER2_IDX;
+ 
+-	priv->timer_irq = platform_get_irq(pdev, 0);
++	priv->timer_irq = irq_of_parse_and_map(np, 0);
+ 	if (priv->timer_irq < 0) {
+ 		dev_err(&pdev->dev, "Error getting counter1 platform irq\n");
+ 		return priv->timer_irq;
+@@ -354,7 +359,7 @@ static int pistachio_rtc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	priv->alarm_irq = platform_get_irq(pdev, 1);
++	priv->alarm_irq = irq_of_parse_and_map(np, 1);
+ 	if (priv->alarm_irq < 0) {
+ 		dev_err(&pdev->dev, "Error getting counter2 platform irq\n");
+ 		return priv->alarm_irq;
+-- 
+1.9.1
+

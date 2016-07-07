@@ -1,6 +1,6 @@
 /dts-v1/;
 
-/include/ "mt7628an.dtsi"
+#include "mt7628an.dtsi"
 
 / {
 	compatible = "mediatek,linkit", "mediatek,mt7628an-soc";
@@ -8,6 +8,10 @@
 
 	chosen {
 		bootargs = "console=ttyS2,57600";
+	};
+
+	aliases {
+		serial0 = &uart2;
 	};
 
 	memory@0 {
@@ -57,6 +61,10 @@
 				ralink,function = "gpio";
 			};
 		};
+	};
+
+	wmac@10300000 {
+		status = "okay";
 	};
 
 	palmbus@10000000 {

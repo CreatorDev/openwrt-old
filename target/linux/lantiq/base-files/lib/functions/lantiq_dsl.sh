@@ -31,7 +31,7 @@ dsl_string() {
 dbt() {
 	local a=$(expr $1 / 10)
 	local b=$(expr $1 % 10)
-	echo "${a}.${b}"
+	echo "${a}.${b#-}"
 }
 #
 # Take a number and convert to k or meg
@@ -414,13 +414,13 @@ latency_delay() {
 	[ -z "$idd" ] && idd=0
 	[ -z "$idu" ] && idu=0
 
-	if [ "$idd" > 100 ]; then
+	if [ "$idd" -gt 100 ]; then
 		idd_s="Interleave"
 	else
 		idd_s="Fast"
 	fi
 
-	if [ "$idu" > 100 ]; then
+	if [ "$idu" -gt 100 ]; then
 		idu_s="Interleave"
 	else
 		idu_s="Fast"
@@ -430,8 +430,8 @@ latency_delay() {
 	sidd=$(scale_latency $idd)
 
 	if [ "$action" = "lucistat" ]; then
-		echo "dsl.latency_num_down=\"$sidu\""
-		echo "dsl.latency_num_up=\"$sidd\""
+		echo "dsl.latency_num_down=\"$sidd\""
+		echo "dsl.latency_num_up=\"$sidu\""
 		echo "dsl.latency_s_down=\"$idd_s\""
 		echo "dsl.latency_s_up=\"$idu_s\""
 	else
@@ -639,7 +639,7 @@ line_data() {
 		echo "Line Attenuation (LATN):                  Down: ${latnd}dB / Up: ${latnu}dB"
 		echo "Signal Attenuation (SATN):                Down: ${satnd}dB / Up: ${satnu}dB"
 		echo "Noise Margin (SNR):                       Down: ${snrd}dB / Up: ${snru}dB"
-		echo "Aggregate Transmit Power(ACTATP):         Down: ${actatpd}dB / Up: ${actatpu}dB"
+		echo "Aggregate Transmit Power (ACTATP):        Down: ${actatpd}dB / Up: ${actatpu}dB"
 		echo "Max. Attainable Data Rate (ATTNDR):       Down: ${sattndrd}/s / Up: ${sattndru}/s"
 	fi
 }
@@ -722,6 +722,7 @@ profile() {
 
 	if [ "$action" = "lucistat" ]; then
 		echo "dsl.profile=${profile:-nil}"
+		echo "dsl.profile_s=\"${s}\""
 	else
 		echo "Profile:                                  $s"
 	fi

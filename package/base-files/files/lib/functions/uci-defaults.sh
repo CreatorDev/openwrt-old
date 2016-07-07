@@ -89,6 +89,12 @@ ucidef_set_interfaces_lan_wan() {
 	json_select ..
 }
 
+ucidef_set_interface_raw() {
+	json_select_object network
+	_ucidef_set_interface "$@"
+	json_select ..
+}
+
 _ucidef_add_switch_port() {
 	# inherited: $num $device $need_tag $role $index $prev_role
 	# inherited: $n_cpu $n_ports $n_vlan $cpu0 $cpu1 $cpu2 $cpu3 $cpu4 $cpu5
@@ -335,15 +341,13 @@ ucidef_add_adsl_modem() {
 
 ucidef_add_vdsl_modem() {
 	local annex="$1"
-	local firmware="$2"
-	local tone="$3"
-	local xfer_mode="$4"
+	local tone="$2"
+	local xfer_mode="$3"
 
 	json_select_object dsl
 		json_select_object modem
 			json_add_string type "vdsl"
 			json_add_string annex "$annex"
-			json_add_string firmware "$firmware"
 			json_add_string tone "$tone"
 			json_add_string xfer_mode "$xfer_mode"
 		json_select ..
@@ -355,6 +359,7 @@ ucidef_set_led_netdev() {
 	local name="$2"
 	local sysfs="$3"
 	local dev="$4"
+	local mode="${5:-link tx rx}"
 
 	json_select_object led
 
@@ -363,6 +368,7 @@ ucidef_set_led_netdev() {
 	json_add_string type netdev
 	json_add_string sysfs "$sysfs"
 	json_add_string device "$dev"
+	json_add_string mode "$mode"
 	json_select ..
 
 	json_select ..
@@ -410,6 +416,7 @@ ucidef_set_led_switch() {
 	local sysfs="$3"
 	local trigger="$4"
 	local port_mask="$5"
+	local speed_mask="$6"
 
 	json_select_object led
 
@@ -419,6 +426,7 @@ ucidef_set_led_switch() {
 	json_add_string sysfs "$sysfs"
 	json_add_string trigger "$trigger"
 	json_add_string port_mask "$port_mask"
+	json_add_string speed_mask "$speed_mask"
 	json_select ..
 
 	json_select ..
@@ -478,17 +486,18 @@ ucidef_set_led_ide() {
 	json_select ..
 }
 
-ucidef_set_led_timer() {
+__ucidef_set_led_timer() {
 	local cfg="led_$1"
 	local name="$2"
 	local sysfs="$3"
-	local delayon="$4"
-	local delayoff="$5"
+	local trigger="$4"
+	local delayon="$5"
+	local delayoff="$6"
 
 	json_select_object led
 
 	json_select_object "$1"
-	json_add_string type timer
+	json_add_string type "$trigger"
 	json_add_string name "$name"
 	json_add_string sysfs "$sysfs"
 	json_add_int delayon "$delayon"
@@ -496,6 +505,14 @@ ucidef_set_led_timer() {
 	json_select ..
 
 	json_select ..
+}
+
+ucidef_set_led_oneshot() {
+	__ucidef_set_led_timer $1 $2 $3 "oneshot" $4 $5
+}
+
+ucidef_set_led_timer() {
+	__ucidef_set_led_timer $1 $2 $3 "timer" $4 $5
 }
 
 ucidef_set_led_rssi() {

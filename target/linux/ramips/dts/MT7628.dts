@@ -1,6 +1,6 @@
 /dts-v1/;
 
-/include/ "mt7628an.dtsi"
+#include "mt7628an.dtsi"
 
 / {
 	compatible = "mediatek,mt7628an-eval-board", "mediatek,mt7628an-soc";
@@ -18,6 +18,10 @@
 				ralink,function = "gpio";
 			};
 		};
+	};
+
+	wmac@10300000 {
+		status = "okay";
 	};
 
 	palmbus@10000000 {

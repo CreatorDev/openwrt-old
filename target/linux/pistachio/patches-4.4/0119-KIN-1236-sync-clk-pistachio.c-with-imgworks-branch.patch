@@ -1,0 +1,53 @@
+From 8a7d4a7800dc21f98a2680d195bd471b4cf4662a Mon Sep 17 00:00:00 2001
+From: Piotr Nakraszewicz <piotr.nakraszewicz@imgtec.com>
+Date: Fri, 23 Oct 2015 09:21:24 +0200
+Subject: KIN-1236: sync clk-pistachio.c with imgworks branch
+
+In 0ab14018f5c0395e3c22981b38ce853817238370 we reverted patch allowing
+cpu to enter low frequencies, which caused platform hang.
+
+IMGworks have also reverted the problematic changes, not the whole
+commit, but only its problematic parts.
+
+Reapply the safe parts from f6cd0ba7dbe4ff600e5fad81f75df6cd6675ebd3
+
+Change-Id: Ib64ad923d26d14824815ad22136e966e28ff7021
+Signed-off-by: Piotr Nakraszewicz <piotr.nakraszewicz@imgtec.com>
+---
+ drivers/clk/pistachio/clk-pistachio.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
+index b377760..7271c4e 100644
+--- a/drivers/clk/pistachio/clk-pistachio.c
++++ b/drivers/clk/pistachio/clk-pistachio.c
+@@ -149,12 +149,20 @@ static struct pistachio_mux pistachio_muxes[] __initdata = {
+ };
+ 
+ static struct pistachio_pll_rate_table mips_pll_rates[] = {
+-	INT_PLL_RATES(52000000, 416000000, 1, 16, 2, 1),
+-	INT_PLL_RATES(52000000, 442000000, 1, 17, 2, 1),
+-	INT_PLL_RATES(52000000, 468000000, 1, 18, 2, 1),
+-	INT_PLL_RATES(52000000, 494000000, 1, 19, 2, 1),
+-	INT_PLL_RATES(52000000, 520000000, 1, 20, 2, 1),
+-	INT_PLL_RATES(52000000, 546000000, 1, 21, 2, 1),
++	INT_PLL_RATES(52000000, 208000000, 5, 40,  2, 1),
++	INT_PLL_RATES(52000000, 234000000, 5, 45,  2, 1),
++	INT_PLL_RATES(52000000, 260000000, 5, 50,  2, 1),
++	INT_PLL_RATES(52000000, 286000000, 5, 55,  2, 1),
++	INT_PLL_RATES(52000000, 312000000, 5, 60,  2, 1),
++	INT_PLL_RATES(52000000, 338000000, 5, 65,  2, 1),
++	INT_PLL_RATES(52000000, 364000000, 5, 70,  2, 1),
++	INT_PLL_RATES(52000000, 390000000, 5, 75,  2, 1),
++	INT_PLL_RATES(52000000, 416000000, 5, 80,  2, 1),
++	INT_PLL_RATES(52000000, 442000000, 5, 85,  2, 1),
++	INT_PLL_RATES(52000000, 468000000, 5, 90,  2, 1),
++	INT_PLL_RATES(52000000, 494000000, 5, 95,  2, 1),
++	INT_PLL_RATES(52000000, 520000000, 5, 100, 2, 1),
++	INT_PLL_RATES(52000000, 546000000, 5, 105, 2, 1),
+ };
+ 
+ static struct pistachio_pll_rate_table wifi_pll_rates[] = {
+-- 
+1.9.1
+
