@@ -34,6 +34,8 @@ there are some key paths where IMG have added solutions:
 | target/linux/pistachio/marduk/profiles/marduk_cc2520.mk	| IMG Marduk platform profile with TI cc2520	|
 | target/linux/pistachio/marduk/profiles/marduk_ca8210.mk	| IMG Marduk platform profile with Cascoda ca8210  |
 
+***Note that mass production Ci40 boards use the Cascoda ca8210 chip, so assume the use of this profile unless you have been personally informed otherwise***
+
 ## Getting started
 
 Firstly, to obtain a copy of the (Ci40) Marduk platform supported OpenWrt source code:
@@ -63,14 +65,9 @@ Load Marduk platform specific OpenWrt configuration for Pistachio.
 2. Check the "Target Profile" is set to Basic platform profile for Marduk
 
         Target Profile (Basic platform profile for Marduk)  --->
-            (X) Basic platform profile for Marduk with TI cc2520
-            ( ) Basic platform profile for Marduk with Cascoda ca8210
+            (X) Basic platform profile for Marduk with Cascoda ca8210
 
-Alternatively, you can use default configuration for Marduk platform with TI cc2520 specific OpenWrt configuration for IMG Pistachio by copying following into .config file:
-
-    $ cat target/linux/pistachio/creator-platform-default.config > .config
-
-Similarly, you can do the same for Marduk platform with Cascoda ca8210 specific OpenWrt configuration:
+Alternatively, you can use default configuration for Marduk platform with Cascoda ca8210 specific OpenWrt configuration for IMG Pistachio by copying following into .config file:
 
     $ cat target/linux/pistachio/creator-platform-cascoda-default.config > .config
 
@@ -92,11 +89,11 @@ By default VERSION is blank if you do not use the creator-platform-default.confi
 - pistachio_marduk_cc2520.dtb (for marduk_cc2520 board) or
 - pistachio_marduk_ca8210.dtb (for marduk_ca8210 board)
 
-For simplicity, let's assume that marduk_cc2520 PROFILE has been selected and VERSION as 1.0.0 hence the filenames will be as follows: 
-- openwrt-1.0.0-pistachio-pistachio_marduk_cc2520-uImage
-- openwrt-1.0.0-pistachio-pistachio_marduk_cc2520-uImage-initramfs
-- openwrt-1.0.0-pistachio-marduk-marduk_cc2520-rootfs.tar.gz
-- pistachio_marduk_cc2520.dtb
+For simplicity, let's assume that marduk_ca8210 PROFILE has been selected and VERSION as 1.0.0 hence the filenames will be as follows: 
+- openwrt-1.0.0-pistachio-pistachio_marduk_ca8210-uImage
+- openwrt-1.0.0-pistachio-pistachio_marduk_ca8210-uImage-initramfs
+- openwrt-1.0.0-pistachio-marduk-marduk_ca8210-rootfs.tar.gz
+- pistachio_marduk_ca8210.dtb
 
 ## Customising your OpenWrt
 You can configure OpenWrt from scratch but it's best to start from a base profile
@@ -104,13 +101,13 @@ e.g. the one for the IMG pistachio board as it has some useful defaults.
 
 Simply select the package you need and add into the marduk profile:
 
-    $ vi target/linux/pistachio/marduk/profiles/marduk_cc2520.mk
+    $ vi target/linux/pistachio/marduk/profiles/marduk_ca8210.mk
 
 If you want to add new package, then simply add package name in the list of packages:
 
     define Profile/marduk
-    NAME:=Basic platform profile for Marduk with TI cc2520
-    PACKAGES:=kmod-i2c kmod-marduk-cc2520 kmod-sound-pistachio-soc \
+    NAME:=Basic platform profile for Marduk with Cascoda ca8210
+    PACKAGES:=kmod-i2c kmod-marduk-ca8210 kmod-sound-pistachio-soc \
                 wpan-tools tcpdump uhttpd uboot-envtools \
                 alsa-lib alsa-utils alsa-utils-tests \
                 iw hostapd wpa-supplicant kmod-uccp420wlan kmod-cfg80211
