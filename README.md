@@ -20,7 +20,7 @@ This guide helps as a quick start but for full details about OpenWrt please see 
 
 ## Using this documentation
 
-This readme contains the basics of building and modifying OpenWrt for Ci40. *You will find much more documentation on the [Creator Documentation website](https://docs.creatordev.io/ci40/guides/developer-guide/).*
+This readme contains the basics of building and modifying OpenWrt for Ci40. **You will find much more documentation on the [Creator Documentation website](https://docs.creatordev.io/ci40/guides/developer-guide/).**
 
 ## Package Content
 
@@ -62,20 +62,20 @@ Load Marduk platform specific OpenWrt configuration for Pistachio.
 
         Target System (Atheros AR7xxx/AR9xxx) --->(X) IMG MIPS Pistachio
 
-2. Check the "Target Profile" is set to Basic platform profile for Marduk
+2. Check the "Target Profile" is set to Basic platform profile for Marduk with Cascoda ca8210
 
         Target Profile (Basic platform profile for Marduk)  --->
             (X) Basic platform profile for Marduk with Cascoda ca8210
 
-Alternatively, you can use default configuration for Marduk platform with Cascoda ca8210 specific OpenWrt configuration for IMG Pistachio by copying following into .config file:
+As an alternative to menuconfig, you can use the default configuration by running the following command:
 
     $ cat target/linux/pistachio/creator-platform-cascoda-default.config > .config
 
-You can add git revision number as DISTRIB_REVISION in the openwrt image by doing following:
+You can add a git revision number as DISTRIB_REVISION in the openwrt image by doing the following:
 
     $ getver.sh . > version
 
-Now build OpenWrt in standard way:
+Now build OpenWrt in the standard way:
 
     $ make V=s -j1
 
@@ -86,7 +86,6 @@ By default VERSION is blank if you do not use the creator-platform-default.confi
 - openwrt-$(VERSION)-pistachio-pistachio_$(PROFILE)-uImage
 - openwrt-$(VERSION)-pistachio-pistachio_$(PROFILE)-uImage-initramfs
 - openwrt-$(VERSION)-pistachio-marduk-$(PROFILE)-rootfs.tar.gz
-- pistachio_marduk_cc2520.dtb (for marduk_cc2520 board) or
 - pistachio_marduk_ca8210.dtb (for marduk_ca8210 board)
 
 For simplicity, let's assume that marduk_ca8210 PROFILE has been selected and VERSION as 1.0.0 hence the filenames will be as follows: 
