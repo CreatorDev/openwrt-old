@@ -81,14 +81,14 @@ Now build OpenWrt in the standard way:
 
 Once the build is completed, you will find the resulting output i.e. images, dtbs and rootfs at "bin/pistachio".
 
-Example output for V1.0.0:
+Example output for V0.9.2:
 
-- openwrt-1.0.0-pistachio-pistachio_marduk_ca8210-uImage
-- openwrt-1.0.0-pistachio-pistachio_marduk_ca8210-uImage-initramfs
-- openwrt-1.0.0-pistachio-marduk-marduk_ca8210-rootfs.tar.gz
+- openwrt-0.9.2-pistachio-pistachio_marduk_ca8210-uImage
+- openwrt-0.9.2-pistachio-pistachio_marduk_ca8210-uImage-initramfs
+- openwrt-0.9.2-pistachio-marduk-marduk_ca8210-rootfs.tar.gz
 - pistachio_marduk_ca8210.dtb
 
-By default the version number is blank if you do not use the creator-platform-default.config for loading the configuration.
+By default the version number is blank if you do not use the creator-platform-cascoda-default.config for loading the configuration.
 
 ## Customising your OpenWrt
 You can configure OpenWrt from scratch but it's best to start from a base profile
@@ -102,7 +102,7 @@ If you want to add new package, then simply add package name in the list of pack
 
     define Profile/marduk
     NAME:=Basic platform profile for Marduk with Cascoda ca8210
-    PACKAGES:=kmod-i2c kmod-marduk-ca8210 kmod-sound-pistachio-soc \
+    PACKAGES:=kmod-i2c kmod-ca8210 kmod-sound-pistachio-soc \
                 wpan-tools tcpdump uhttpd uboot-envtools \
                 alsa-lib alsa-utils alsa-utils-tests \
                 iw hostapd wpa-supplicant kmod-uccp420wlan kmod-cfg80211
