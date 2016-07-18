@@ -79,20 +79,16 @@ Now build OpenWrt in the standard way:
 
     $ make V=s -j1
 
-Once the build is completed, you will find the resulting output i.e. images, dtbs and rootfs at "bin/pistachio", depending upon the selected profile.
-Where PROFILE can be marduk_cc2520, marduk_ca8210, marduk_cc2520_wifi and VERSION is whatever mentioned in CONFIG_VERSION_NUMBER.
-By default VERSION is blank if you do not use the creator-platform-default.config for loading the configuration.
+Once the build is completed, you will find the resulting output i.e. images, dtbs and rootfs at "bin/pistachio".
 
-- openwrt-$(VERSION)-pistachio-pistachio_$(PROFILE)-uImage
-- openwrt-$(VERSION)-pistachio-pistachio_$(PROFILE)-uImage-initramfs
-- openwrt-$(VERSION)-pistachio-marduk-$(PROFILE)-rootfs.tar.gz
-- pistachio_marduk_ca8210.dtb (for marduk_ca8210 board)
+Example output for V1.0.0:
 
-For simplicity, let's assume that marduk_ca8210 PROFILE has been selected and VERSION as 1.0.0 hence the filenames will be as follows: 
 - openwrt-1.0.0-pistachio-pistachio_marduk_ca8210-uImage
 - openwrt-1.0.0-pistachio-pistachio_marduk_ca8210-uImage-initramfs
 - openwrt-1.0.0-pistachio-marduk-marduk_ca8210-rootfs.tar.gz
 - pistachio_marduk_ca8210.dtb
+
+By default the version number is blank if you do not use the creator-platform-default.config for loading the configuration.
 
 ## Customising your OpenWrt
 You can configure OpenWrt from scratch but it's best to start from a base profile
