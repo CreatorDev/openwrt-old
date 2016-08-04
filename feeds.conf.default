@@ -6,6 +6,7 @@ src-git management https://github.com/openwrt-management/packages.git
 src-git targets https://github.com/openwrt/targets.git
 src-git pkg https://github.com/CreatorDev/openwrt-feeds.git
 src-git ckt https://github.com/CreatorKit/openwrt-ckt-feeds.git
+src-git pickleprog https://github.com/CreatorDev/openwrt-pickle.git
 #src-git oldpackages http://git.openwrt.org/packages.git
 #src-svn xwrt http://x-wrt.googlecode.com/svn/trunk/package
 #src-svn phone svn://svn.openwrt.org/openwrt/feeds/phone
