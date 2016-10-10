@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
 ARCH:=mipsel
 BOARD:=pistachio
 BOARDNAME:=IMG MIPS Pistachio
-FEATURES:=targz nand ubifs audio ramdisk
+FEATURES:=nand squashfs ubifs audio
 SUBTARGETS=marduk
 
 KERNEL_PATCHVER:=4.4
