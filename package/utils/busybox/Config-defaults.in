@@ -783,7 +783,7 @@ config BUSYBOX_DEFAULT_UNIQ
 	default y
 config BUSYBOX_DEFAULT_USLEEP
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_UUDECODE
 	bool
 	default n
