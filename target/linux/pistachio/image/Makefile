@@ -62,10 +62,10 @@ endef
 
 define Image/BuildKernel/uImage
 	$(call MkImageGzip,$(1))
-	$(CP) $(KDIR)/uImage-$(1) $(BIN_DIR)/$(IMG_PREFIX)-$(1)-uImage
+	$(CP) $(KDIR)/uImage-$(1) $(BIN_DIR)/$(IMG_PREFIX)-$(1)-$(SUBTARGET)-uImage
 ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
 	$(call MkImageGzip,$(1),-initramfs)
-	$(CP) $(KDIR)/uImage-$(1)-initramfs $(BIN_DIR)/$(IMG_PREFIX)-$(1)-uImage-initramfs
+	$(CP) $(KDIR)/uImage-$(1)-initramfs $(BIN_DIR)/$(IMG_PREFIX)-$(1)-$(SUBTARGET)-uImage-initramfs
 endif
 endef
 
