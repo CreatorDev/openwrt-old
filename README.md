@@ -91,11 +91,11 @@ or
 
 Once the build is completed, you will find the resulting output i.e. images, dtbs and rootfs at "bin/pistachio".
 
-Example output for V0.9.4:
+Example output for V0.9.5:
 
-- openwrt-0.9.4-pistachio-pistachio_marduk_ca8210-uImage
-- openwrt-0.9.4-pistachio-pistachio_marduk_ca8210-uImage-initramfs
-- openwrt-0.9.4-pistachio-marduk-marduk_ca8210-rootfs.tar.gz
+- openwrt-0.9.5-pistachio-pistachio_marduk_ca8210-uImage
+- openwrt-0.9.5-pistachio-pistachio_marduk_ca8210-uImage-initramfs
+- openwrt-0.9.5-pistachio-marduk-marduk_ca8210-rootfs.tar.gz
 - pistachio_marduk_ca8210.dtb
 
 By default the version number is blank if you do not use the creator-platform-default-cascoda.config for loading the configuration.
@@ -154,3 +154,11 @@ contains patches created from [openwrt-4.1.13](https://github.com/CreatorDev/lin
         git format-patch <commit_id> --keep-subject --start-number <number>
 
 *NOTE :* Number should the next one from the last patch already added in OpenWrt.
+
+----
+
+## Contributing
+
+We welcome all contributions to this project and we give credit where it's due. Anything from enhancing functionality to improving documentation and bug reporting - it's all good.
+
+For more details about the Contributor's guidelines, refer to the [contributor guide](https://github.com/CreatorKit/creator-docs/blob/master/ContributorGuide.md).
